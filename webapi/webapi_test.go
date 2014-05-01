@@ -7,7 +7,7 @@ import (
 
 	"github.com/pblaszczyk/sscc/model"
 
-	. "github.com/go-check/check"
+	. "gopkg.in/check.v1"
 )
 
 type webapiSuite struct {

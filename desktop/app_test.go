@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	. "github.com/go-check/check"
+	. "gopkg.in/check.v1"
 )
 
 type appSuite struct {
