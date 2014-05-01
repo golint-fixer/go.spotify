@@ -5,7 +5,7 @@ go:
  - release
  - tip
  
- install:
+install:
  - go get github.com/go-check/check
 
 script:
