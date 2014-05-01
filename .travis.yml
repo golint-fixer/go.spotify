@@ -7,6 +7,9 @@ go:
  
 install:
  - go get gopkg.in/check.v1
+ - go get github.com/cheggaaa/pb
+ - go get github.com/codegangsta/cli
+ - go get github.com/guelfey/go.dbus
 
 script:
  - go test -v ./...
