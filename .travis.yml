@@ -10,6 +10,7 @@ install:
  - go get github.com/cheggaaa/pb
  - go get github.com/codegangsta/cli
  - go get github.com/guelfey/go.dbus
+ - go get code.google.com/p/go.tools/cmd/vet
 
 script:
  - go test -v -race ./... -gocheck.v
