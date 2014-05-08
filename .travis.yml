@@ -1,6 +1,5 @@
 language: go
 go: 
- - 1.1
  - 1.2
  - release
  - tip
@@ -10,6 +9,9 @@ install:
  - go get github.com/cheggaaa/pb
  - go get github.com/codegangsta/cli
  - go get github.com/guelfey/go.dbus
+ - go get code.google.com/p/go.tools/cmd/vet
 
 script:
- - go test -v ./...
+ - go test -v -race ./... -gocheck.v
+ - go vet ./...
+ - go fmt ./...
