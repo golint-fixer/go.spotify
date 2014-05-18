@@ -1,0 +1,26 @@
+{
+	"ImportPath": "github.com/pblaszczyk/sscc",
+	"GoVersion": "go1.2.2",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/cheggaaa/pb",
+			"Rev": "74be7a1388046f374ac36e93d46f5d56e856f827"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/cli",
+			"Comment": "1.0.0-65-g820deef",
+			"Rev": "820deefc9031d101f085ef773425fc6ca7a5363e"
+		},
+		{
+			"ImportPath": "github.com/guelfey/go.dbus",
+			"Rev": "f6a3a2366cc39b8479cadc499d3c735fb10fbdda"
+		},
+		{
+			"ImportPath": "gopkg.in/check.v1",
+			"Rev": "871360013c92e1c715c2de6d06b54899468a8a2d"
+		}
+	]
+}
