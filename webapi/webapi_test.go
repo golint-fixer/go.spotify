@@ -1,32 +1,17 @@
 package webapi
 
 import (
+	"fmt"
 	"io"
 	"net/http"
+	"reflect"
 	"testing"
 
+	"github.com/pblaszczyk/gophtu"
 	"github.com/pblaszczyk/sscc/model"
-
-	. "gopkg.in/check.v1"
 )
 
-type webapiSuite struct {
-	getF func(url string) (resp *http.Response, err error)
-}
-
-var _ = Suite(&webapiSuite{})
-
-func TestWebapi(t *testing.T) { TestingT(t) }
-
-func (s *webapiSuite) SetUpTest(c *C) {
-	s.getF = getF
-}
-
-func (s *webapiSuite) TearDownTest(c *C) {
-	getF = s.getF
-}
-
-func (s *webapiSuite) Test_artists_data(c *C) {
+func Test_artists_data(t *testing.T) {
 	cfg := []struct {
 		a   artists
 		exp []model.Artist
@@ -52,12 +37,13 @@ func (s *webapiSuite) Test_artists_data(c *C) {
 			},
 		},
 	}
-	for _, cfg := range cfg {
-		c.Check(cfg.a.data(), DeepEquals, cfg.exp)
+	for i, cfg := range cfg {
+		gophtu.Check(t, reflect.DeepEqual(cfg.a.data(), cfg.exp), cfg.a.data(),
+			cfg.exp, i)
 	}
 }
 
-func (s *webapiSuite) Test_albums_data(c *C) {
+func Test_albums_data(t *testing.T) {
 	cfg := []struct {
 		a   albums
 		exp []model.Album
@@ -92,12 +78,13 @@ func (s *webapiSuite) Test_albums_data(c *C) {
 			},
 		},
 	}
-	for _, cfg := range cfg {
-		c.Check(cfg.a.data(), DeepEquals, cfg.exp)
+	for i, cfg := range cfg {
+		gophtu.Check(t, reflect.DeepEqual(cfg.a.data(), cfg.exp), cfg.a.data(),
+			cfg.exp, i)
 	}
 }
 
-func (s *webapiSuite) Test_albums_track(c *C) {
+func Test_albums_track(t *testing.T) {
 	cfg := []struct {
 		a   tracks
 		exp []model.Track
@@ -136,8 +123,9 @@ func (s *webapiSuite) Test_albums_track(c *C) {
 			},
 		},
 	}
-	for _, cfg := range cfg {
-		c.Check(cfg.a.data(), DeepEquals, cfg.exp)
+	for i, cfg := range cfg {
+		gophtu.Check(t, reflect.DeepEqual(cfg.a.data(), cfg.exp), cfg.a.data(),
+			cfg.exp, i)
 	}
 }
 
@@ -184,57 +172,80 @@ func mockJson(data string) {
 	return
 }
 
-func (s *webapiSuite) Test_respF(c *C) {
+func Test_respF(t *testing.T) {
+	defer func() func() {
+		gF := getF
+		return func() {
+			getF = gF
+		}
+	}()()
 	mockJson(`
 {"info": {"num_results": 1, "limit": 100, "offset": 0, "page": 1}, "sths": [{
 "name": "mocked name"}, {"name": "mocked name 2"}]}`)
 	rur := respMock{}
 	eof, err := respF("", "", 0, &rur)
-	c.Assert(err, IsNil)
-	c.Assert(eof, Equals, true)
-	c.Assert(rur.Sths, HasLen, 2)
-	c.Check(rur.Sths[0].Name, Equals, "mocked name")
-	c.Check(rur.Sths[1].Name, Equals, "mocked name 2")
+	gophtu.Assert(t, err == nil, nil, err)
+	gophtu.Assert(t, eof, true, eof)
+	gophtu.Assert(t, len(rur.Sths) == 2, 2, len(rur.Sths))
+	gophtu.Check(t, rur.Sths[0].Name == "mocked name", "mocked name",
+		rur.Sths[0].Name)
+	gophtu.Check(t, rur.Sths[1].Name == "mocked name 2", "mocked name 2",
+		rur.Sths[1].Name)
 	eof, err = respF("", "", 0, &http.Response{})
-	c.Assert(err, Equals, errInvResp)
+	gophtu.Assert(t, err == errInvResp, errInvResp, err)
 }
 
 type searchStr []struct {
 	search string
 	err    error
 	gt1    bool
-	resCh  Checker
+	isnil  bool
 }
 
-func (s *webapiSuite) Test_SearchArtist(c *C) {
+func Test_SearchArtist(t *testing.T) {
 	cfg := searchStr{
-		{"In This Moment", nil, true, NotNil}, {"łąśðəæóœę", nil, false, IsNil}}
-	for _, cfg := range cfg {
+		{"In This Moment", nil, true, false}, {"łąśðəæóœę", nil, false, true}}
+	for i, cfg := range cfg {
 		res, err := SearchArtist(cfg.search)
-		c.Assert(err, DeepEquals, cfg.err)
-		c.Assert(res, cfg.resCh)
-		c.Check(len(res) >= 1, Equals, cfg.gt1)
+		gophtu.Assert(t, reflect.DeepEqual(err, cfg.err), cfg.err, err, i)
+		if cfg.isnil {
+			gophtu.Assert(t, res == nil, res, nil, i)
+		} else {
+			gophtu.AssertFalse(t, res == nil, nil, i)
+		}
+		gophtu.CheckE(t, (len(res) >= 1) == cfg.gt1, cfg.gt1, len(res) >= 1,
+			fmt.Sprintf("%d should be > 0", len(res)), i)
 	}
 }
 
-func (s *webapiSuite) Test_SearchAlbum(c *C) {
+func Test_SearchAlbum(t *testing.T) {
 	cfg := searchStr{
-		{"Piece by Piece", nil, true, NotNil}, {"łąśðəæóœę", nil, false, IsNil}}
-	for _, cfg := range cfg {
+		{"Piece by Piece", nil, true, false}, {"łąśðəæóœę", nil, false, true}}
+	for i, cfg := range cfg {
 		res, err := SearchAlbum(cfg.search)
-		c.Assert(err, DeepEquals, cfg.err)
-		c.Assert(res, cfg.resCh)
-		c.Check(len(res) >= 1, Equals, cfg.gt1)
+		gophtu.Assert(t, reflect.DeepEqual(err, cfg.err), cfg.err, err, i)
+		if cfg.isnil {
+			gophtu.Assert(t, res == nil, res, nil, i)
+		} else {
+			gophtu.AssertFalse(t, res == nil, nil, i)
+		}
+		gophtu.CheckE(t, (len(res) >= 1) == cfg.gt1, cfg.gt1, len(res) >= 1,
+			fmt.Sprintf("%d should be > 0", len(res)), i)
 	}
 }
 
-func (s *webapiSuite) Test_SearchTrack(c *C) {
+func Test_SearchTrack(t *testing.T) {
 	cfg := searchStr{
-		{"Run To Your Mama", nil, true, NotNil}, {"łąśðəæóœę", nil, false, IsNil}}
-	for _, cfg := range cfg {
+		{"Run To Your Mama", nil, true, false}, {"łąśðəæóœę", nil, false, true}}
+	for i, cfg := range cfg {
 		res, err := SearchTrack(cfg.search)
-		c.Assert(err, DeepEquals, cfg.err)
-		c.Assert(res, cfg.resCh)
-		c.Check(len(res) >= 1, Equals, cfg.gt1)
+		gophtu.Assert(t, reflect.DeepEqual(err, cfg.err), cfg.err, err, i)
+		if cfg.isnil {
+			gophtu.Assert(t, res == nil, res, nil, i)
+		} else {
+			gophtu.AssertFalse(t, res == nil, nil, i)
+		}
+		gophtu.CheckE(t, (len(res) >= 1) == cfg.gt1, cfg.gt1, len(res) >= 1,
+			fmt.Sprintf("%d should be > 0", len(res)), i)
 	}
 }

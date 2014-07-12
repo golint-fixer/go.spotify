@@ -8,10 +8,9 @@ go:
 install:
  - go get code.google.com/p/go.tools/cmd/vet
  - go get github.com/tools/godep
- - export PATH=${PATH}:${HOME}/gopath/bin
+ - go install -a -race std
 
 script:
  - godep restore
- - go vet ./...
- - go fmt ./...
- - godep go test -v -race ./... -gocheck.v
+ - go tool vet -all .
+ - godep go test -v -race ./...

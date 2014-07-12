@@ -19,8 +19,8 @@
 			"Rev": "f6a3a2366cc39b8479cadc499d3c735fb10fbdda"
 		},
 		{
-			"ImportPath": "gopkg.in/check.v1",
-			"Rev": "871360013c92e1c715c2de6d06b54899468a8a2d"
+			"ImportPath": "github.com/pblaszczyk/gophtu",
+			"Rev": "5b7c38b8b89a289b818d030dd0fae3ca52aefad1"
 		}
 	]
 }

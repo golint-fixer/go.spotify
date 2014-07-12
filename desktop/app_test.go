@@ -3,38 +3,29 @@ package desktop
 import (
 	"os"
 	"os/exec"
+	"reflect"
 	"testing"
 	"time"
 
-	. "gopkg.in/check.v1"
+	"github.com/pblaszczyk/gophtu"
 )
-
-type appSuite struct {
-	cmdB *exec.Cmd
-}
-
-var _ = Suite(&appSuite{})
-
-func TestApp(t *testing.T) { TestingT(t) }
 
 const testEnv = "sscc_mocked_app"
 
 func TestMockApp(t *testing.T) {
 	if os.Getenv(testEnv) == "" {
-		return
+		t.Skip("helper test only")
 	}
 	<-time.After(time.Second)
 }
 
-func (s *appSuite) SetUpTest(c *C) {
-	s.cmdB = cmd
-}
-
-func (s *appSuite) TearDownTest(c *C) {
-	cmd = s.cmdB
-}
-
-func (s *appSuite) TestStart(c *C) {
+func TestStart(t *testing.T) {
+	defer func() func() {
+		c := cmd
+		return func() {
+			cmd = c
+		}
+	}()()
 	cfg := []struct {
 		cmd *exec.Cmd
 		err error
@@ -45,21 +36,24 @@ func (s *appSuite) TestStart(c *C) {
 	os.Setenv(testEnv, testEnv)
 	for _, cfg := range cfg {
 		cmd = cfg.cmd
-		c.Check(Start(), DeepEquals, cfg.err)
+		err := Start()
+		gophtu.Check(t, reflect.DeepEqual(err, cfg.err), cfg.err, err)
 		if cmd != nil {
-			c.Assert(Kill(), IsNil)
+			err = Kill()
+			gophtu.Assert(t, err == nil, nil, err)
 		}
 	}
 }
 
-func (s *appSuite) TestStart_attach_Kill(c *C) {
+func TestStart_attach_Kill(t *testing.T) {
 	if os.Getenv("sscc_app_test") == "" {
-		c.Skip("sscc_app_test var not set")
+		t.Skip("sscc_app_test var not set")
 	}
-	c.Assert(Start(), IsNil)
+	err := Start()
+	gophtu.Assert(t, err == nil, nil, err)
 	<-time.After(5 * time.Second)
-	cmd = nil
-	if !c.Check(Kill(), IsNil) {
+	err = Kill()
+	if !gophtu.Check(t, err == nil, nil, err) {
 		panic("Failed to kill spotify app")
 	}
 }
