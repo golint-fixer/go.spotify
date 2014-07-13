@@ -39,7 +39,6 @@ func NewApp() (app *sscc) {
 				{Name: "track", Usage: "Search for track.", Action: app.Track},
 			}},
 	}
-	app.App.EnableBashCompletion = true
 	webapi.Bar = true
 	return
 }
