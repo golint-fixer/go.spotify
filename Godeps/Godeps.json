@@ -7,12 +7,11 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/cheggaaa/pb",
-			"Rev": "74be7a1388046f374ac36e93d46f5d56e856f827"
+			"Rev": "3544a53d32f49584597eb8fa0ed3b0873a7bf94a"
 		},
 		{
 			"ImportPath": "github.com/codegangsta/cli",
-			"Comment": "1.0.0-65-g820deef",
-			"Rev": "820deefc9031d101f085ef773425fc6ca7a5363e"
+			"Rev": "d38a3b82a6edb4efacbf0b42cd064f574f2a2a3f"
 		},
 		{
 			"ImportPath": "github.com/guelfey/go.dbus",
@@ -20,7 +19,7 @@
 		},
 		{
 			"ImportPath": "github.com/pblaszczyk/gophtu",
-			"Rev": "5b7c38b8b89a289b818d030dd0fae3ca52aefad1"
+			"Rev": "de28258e0758ddd465c0306ee6cfe4fb3a325c7e"
 		}
 	]
 }
