@@ -1,4 +1,4 @@
-// webapi stores function for interacting with Spotify Metadata API
+// Package webapi stores function for interacting with Spotify Metadata API
 package webapi
 
 import (
@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	searchUrl    = "http://ws.spotify.com/search/1/%s.json?q=%s&page=%d"
+	searchURL    = "http://ws.spotify.com/search/1/%s.json?q=%s&page=%d"
 	searchArtist = "artist"
 	searchAlbum  = "album"
 	searchTrack  = "track"
@@ -25,11 +25,11 @@ const (
 var (
 	bar *pb.ProgressBar
 	// Bar specifies if progress bar should be displayed.
-	Bar bool = false
+	Bar = false
 )
 
 var (
-	errInvResp     = errors.New("webapi: creating response failed!")
+	errInvResp     = errors.New("webapi: creating response failed")
 	errUnsupSearch = errors.New("webapi: unsupported search keyword")
 )
 
@@ -46,7 +46,7 @@ type respHeader struct {
 
 type (
 	artist struct {
-		Uri  string `json:"href"`
+		URI  string `json:"href"`
 		Name string `json:"name"`
 	}
 	artistResp struct {
@@ -58,7 +58,7 @@ type (
 
 type (
 	album struct {
-		Uri     string   `json:"href"`
+		URI     string   `json:"href"`
 		Name    string   `json:"name"`
 		Artists []artist `json:"artists"`
 	}
@@ -71,7 +71,7 @@ type (
 
 type (
 	track struct {
-		Uri     string   `json:"href"`
+		URI     string   `json:"href"`
 		Name    string   `json:"name"`
 		Album   album    `json:"album"`
 		Artists []artist `json:"artists"`
@@ -86,7 +86,7 @@ type (
 func (a *artists) data() interface{} {
 	var res []model.Artist
 	for _, a := range []artist(*a) {
-		res = append(res, model.Artist{Uri: a.Uri, Name: a.Name})
+		res = append(res, model.Artist{URI: a.URI, Name: a.Name})
 	}
 	return res
 }
@@ -96,9 +96,9 @@ func (a *albums) data() interface{} {
 	for _, a := range []album(*a) {
 		var arts []model.Artist
 		for _, art := range a.Artists {
-			arts = append(arts, model.Artist{Uri: art.Uri, Name: art.Name})
+			arts = append(arts, model.Artist{URI: art.URI, Name: art.Name})
 		}
-		res = append(res, model.Album{Uri: a.Uri, Name: a.Name, Artists: arts})
+		res = append(res, model.Album{URI: a.URI, Name: a.Name, Artists: arts})
 	}
 	return res
 }
@@ -108,10 +108,10 @@ func (a *tracks) data() interface{} {
 	for _, a := range []track(*a) {
 		var arts []model.Artist
 		for _, art := range a.Artists {
-			arts = append(arts, model.Artist{Uri: art.Uri, Name: art.Name})
+			arts = append(arts, model.Artist{URI: art.URI, Name: art.Name})
 		}
-		res = append(res, model.Track{Uri: a.Uri, Name: a.Name,
-			AlbumUri: a.Album.Uri, AlbumName: a.Album.Name, Artists: arts})
+		res = append(res, model.Track{URI: a.URI, Name: a.Name,
+			AlbumURI: a.Album.URI, AlbumName: a.Album.Name, Artists: arts})
 	}
 	return res
 }
@@ -138,7 +138,7 @@ var barF = func(inf reflect.Value, p int) {
 }
 
 var respF = func(search, val string, p int, resp interface{}) (bool, error) {
-	r, err := getF(fmt.Sprintf(searchUrl, search, url.QueryEscape(val), p))
+	r, err := getF(fmt.Sprintf(searchURL, search, url.QueryEscape(val), p))
 	if err != nil {
 		return false, err
 	}
@@ -181,45 +181,45 @@ func search(search, val string) (interface{}, error) {
 	}
 	p := 1
 	for {
-		if eof, err := respF(search, val, p, v); err != nil {
+		eof, err := respF(search, val, p, v)
+		if err != nil {
 			return nil, err
-		} else {
-			r := v.data()
-			res.Elem().Set(reflect.AppendSlice(res.Elem(), reflect.ValueOf(r)))
-			if eof {
-				if Bar {
-					bar.Finish()
-				}
-				return res.Elem().Interface(), nil
-			}
-			p++
 		}
+		r := v.data()
+		res.Elem().Set(reflect.AppendSlice(res.Elem(), reflect.ValueOf(r)))
+		if eof {
+			if Bar {
+				bar.Finish()
+			}
+			return res.Elem().Interface(), nil
+		}
+		p++
 	}
 }
 
-// Search for artist.
+// SearchArtist searches for artist.
 func SearchArtist(artist string) ([]model.Artist, error) {
-	if r, err := search(searchArtist, artist); err != nil {
+	r, err := search(searchArtist, artist)
+	if err != nil {
 		return nil, err
-	} else {
-		return r.([]model.Artist), nil
 	}
+	return r.([]model.Artist), nil
 }
 
-// Search for album.
+// SearchAlbum searches for album.
 func SearchAlbum(album string) ([]model.Album, error) {
-	if r, err := search(searchAlbum, album); err != nil {
+	r, err := search(searchAlbum, album)
+	if err != nil {
 		return nil, err
-	} else {
-		return r.([]model.Album), nil
 	}
+	return r.([]model.Album), nil
 }
 
-// Search for track.
+// SearchTrack searches for track.
 func SearchTrack(track string) ([]model.Track, error) {
-	if r, err := search(searchTrack, track); err != nil {
+	r, err := search(searchTrack, track)
+	if err != nil {
 		return nil, err
-	} else {
-		return r.([]model.Track), nil
 	}
+	return r.([]model.Track), nil
 }

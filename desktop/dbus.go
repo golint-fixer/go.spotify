@@ -17,13 +17,13 @@ const (
 	methodPlay         = "org.mpris.MediaPlayer2.Player.Play"
 	methodSeek         = "org.mpris.MediaPlayer2.Player.Seek"
 	methodSetPos       = "org.mpris.MediaPlayer2.Player.SetPosition"
-	methodOpenUri      = "org.mpris.MediaPlayer2.Player.OpenUri"
+	methodOpenURI      = "org.mpris.MediaPlayer2.Player.OpenUri"
 	methodQuit         = "org.mpris.MediaPlayer2.Quit"
 	methodRaise        = "org.mpris.MediaPlayer2.Raise"
 	propTrackList      = "org.mpris.MediaPlayer2.HasTrackList"
 	propIdentity       = "org.mpris.MediaPlayer2.Identity"
 	propDesktopEntry   = "org.mpris.MediaPlayer2.DesktopEntry"
-	propSupUriSchemes  = "org.mpris.MediaPlayer2.SupportedUriSchemes"
+	propSupURISchemes  = "org.mpris.MediaPlayer2.SupportedUriSchemes"
 	propSupMimeTypes   = "org.mpris.MediaPlayer2.SupportedMimeTypes"
 	propPlaybackStatus = "org.mpris.MediaPlayer2.Player.PlaybackStatus"
 	propLoopStatus     = "org.mpris.MediaPlayer2.Player.LoopStatus"
@@ -46,7 +46,7 @@ const (
 	methodGetAll       = "org.freedesktop.DBus.Properties.GetAll"
 	methodIntrospect   = "org.freedesktop.DBus.Introspectable.Introspect"
 	methodPing         = "org.freedesktop.DBus.Peer.Ping"
-	methodMachineId    = "org.freedesktop.DBus.Peer.GetMachineId"
+	methodMachineID    = "org.freedesktop.DBus.Peer.GetMachineId"
 )
 
 var initDbus = func() (*idbus.Object, error) {
@@ -57,37 +57,37 @@ var initDbus = func() (*idbus.Object, error) {
 	return c.Object(dest, objPath), nil
 }
 
-// Play next track from currently played playlist.
+// Next plays next track from currently played playlist.
 func Next() error {
 	return noArgsMethod(methodNext)
 }
 
-// Play previous track from currently played playlist.
+// Prev plays previous track from currently played playlist.
 func Prev() error {
 	return noArgsMethod(methodPrev)
 }
 
-// Pause currently played track.
+// Pause pauses currently played track.
 func Pause() error {
 	return noArgsMethod(methodPause)
 }
 
-// Toggle between play & pause state.
+// PlayPause toggles between play & pause state.
 func PlayPause() error {
 	return noArgsMethod(methodPlayPause)
 }
 
-// Stop playing current track.
+// Stop stops playing current track.
 func Stop() error {
 	return noArgsMethod(methodStop)
 }
 
-// Play currently set track.
+// Play plays currently set track.
 func Play() error {
 	return noArgsMethod(methodPlay)
 }
 
-// Seek for offset µs. Negative offset means seeking back.
+// Seek seeks for offset µs. Negative offset means seeking back.
 func Seek(offset int64) error {
 	o, err := initDbus()
 	if err != nil {
@@ -97,33 +97,33 @@ func Seek(offset int64) error {
 	return call.Err
 }
 
-// Go to specified position in currently set track.
-// trackId must be equal to currently set track.
-func SetPos(trackId string, pos int64) error {
+// SetPos goes to specified position in currently set track.
+// trackID must be equal to currently set track.
+func SetPos(trackID string, pos int64) error {
 	o, err := initDbus()
 	if err != nil {
 		return err
 	}
-	call := o.Call(methodSetPos, 0, idbus.ObjectPath(trackId), pos)
+	call := o.Call(methodSetPos, 0, idbus.ObjectPath(trackID), pos)
 	return call.Err
 }
 
-// Start playing track with provided uri.
-func OpenUri(uri string) error {
+// OpenURI starts playing track with provided uri.
+func OpenURI(uri string) error {
 	o, err := initDbus()
 	if err != nil {
 		return err
 	}
-	call := o.Call(methodOpenUri, 0, uri)
+	call := o.Call(methodOpenURI, 0, uri)
 	return call.Err
 }
 
-// Quit spotify process.
+// Quit quits spotify process.
 func Quit() error {
 	return noArgsMethod(methodQuit)
 }
 
-// Raise spotify player.
+// Raise raises spotify player.
 func Raise() error {
 	return noArgsMethod(methodRaise)
 }

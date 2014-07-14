@@ -1,4 +1,4 @@
-// desktop stores function for controlling Spotify desktop application
+// Package desktop stores function for controlling Spotify desktop application
 package desktop
 
 import (
@@ -59,7 +59,7 @@ func attach() (err error) {
 	}
 	for _, v := range l {
 		if pid, err = strconv.Atoi(v); err != nil {
-			return fmt.Errorf("desktop: retrieved PID of %s is invalid: %s.",
+			return fmt.Errorf("desktop: retrieved PID of %s is invalid: %s",
 				procName, v)
 		}
 		pids = append(pids, pid)

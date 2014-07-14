@@ -73,7 +73,7 @@ func (s *sscc) Prev(ctx *cli.Context) {
 // Open starts playing specified uri.
 func (s *sscc) Open(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
-	handleErr(desktop.OpenUri(ctx.Args().First()))
+	handleErr(desktop.OpenURI(ctx.Args().First()))
 }
 
 // Open starts playing.

@@ -17,23 +17,23 @@ func Test_artists_data(t *testing.T) {
 		exp []model.Artist
 	}{
 		{artists{
-			{Uri: "some_uri", Name: " name1"},
-			{Uri: " second_uri", Name: "name2"},
-			{Uri: "uri 3", Name: "name 3"},
+			{URI: "some_uri", Name: " name1"},
+			{URI: " second_uri", Name: "name2"},
+			{URI: "uri 3", Name: "name 3"},
 		},
 			[]model.Artist{
-				{Uri: "some_uri", Name: " name1"},
-				{Uri: " second_uri", Name: "name2"},
-				{Uri: "uri 3", Name: "name 3"},
+				{URI: "some_uri", Name: " name1"},
+				{URI: " second_uri", Name: "name2"},
+				{URI: "uri 3", Name: "name 3"},
 			},
 		},
 		{},
 		{
 			artists{
-				{Uri: "sth", Name: "urk"},
+				{URI: "sth", Name: "urk"},
 			},
 			[]model.Artist{
-				{Uri: "sth", Name: "urk"},
+				{URI: "sth", Name: "urk"},
 			},
 		},
 	}
@@ -49,32 +49,32 @@ func Test_albums_data(t *testing.T) {
 		exp []model.Album
 	}{
 		{albums{
-			{Uri: "some_uri", Name: " name1",
+			{URI: "some_uri", Name: " name1",
 				Artists: []artist{
-					{Uri: "u1", Name: "n1"}, {Uri: "u2", Name: "n2"}}},
-			{Uri: " second_uri", Name: "name2",
+					{URI: "u1", Name: "n1"}, {URI: "u2", Name: "n2"}}},
+			{URI: " second_uri", Name: "name2",
 				Artists: []artist{
-					{Uri: "u3", Name: "n2"},
-					{Uri: "uri 3", Name: "name 3"}}},
+					{URI: "u3", Name: "n2"},
+					{URI: "uri 3", Name: "name 3"}}},
 		},
 			[]model.Album{
-				{Uri: "some_uri", Name: " name1",
+				{URI: "some_uri", Name: " name1",
 					Artists: []model.Artist{
-						{Uri: "u1", Name: "n1"}, {Uri: "u2", Name: "n2"},
+						{URI: "u1", Name: "n1"}, {URI: "u2", Name: "n2"},
 					}},
-				{Uri: " second_uri", Name: "name2",
+				{URI: " second_uri", Name: "name2",
 					Artists: []model.Artist{
-						{Uri: "u3", Name: "n2"}, {Uri: "uri 3", Name: "name 3"},
+						{URI: "u3", Name: "n2"}, {URI: "uri 3", Name: "name 3"},
 					}},
 			},
 		},
 		{},
 		{
 			albums{
-				{Uri: "sth", Name: "urk"},
+				{URI: "sth", Name: "urk"},
 			},
 			[]model.Album{
-				{Uri: "sth", Name: "urk"},
+				{URI: "sth", Name: "urk"},
 			},
 		},
 	}
@@ -90,36 +90,36 @@ func Test_albums_track(t *testing.T) {
 		exp []model.Track
 	}{
 		{tracks{
-			{Uri: "some_uri", Name: " name1",
-				Album: album{Name: "sur", Uri: "kur"},
+			{URI: "some_uri", Name: " name1",
+				Album: album{Name: "sur", URI: "kur"},
 				Artists: []artist{
-					{Uri: "u1", Name: "n1"}, {Uri: "u2", Name: "n2"}}},
-			{Uri: " second_uri", Name: "name2",
-				Album: album{Name: "rem", Uri: " drem"},
+					{URI: "u1", Name: "n1"}, {URI: "u2", Name: "n2"}}},
+			{URI: " second_uri", Name: "name2",
+				Album: album{Name: "rem", URI: " drem"},
 				Artists: []artist{
-					{Uri: "u3", Name: "n2"},
-					{Uri: "uri 3", Name: "name 3"}}},
+					{URI: "u3", Name: "n2"},
+					{URI: "uri 3", Name: "name 3"}}},
 		},
 			[]model.Track{
-				{Uri: "some_uri", Name: " name1",
-					AlbumName: "sur", AlbumUri: "kur",
+				{URI: "some_uri", Name: " name1",
+					AlbumName: "sur", AlbumURI: "kur",
 					Artists: []model.Artist{
-						{Uri: "u1", Name: "n1"}, {Uri: "u2", Name: "n2"},
+						{URI: "u1", Name: "n1"}, {URI: "u2", Name: "n2"},
 					}},
-				{Uri: " second_uri", Name: "name2",
-					AlbumName: "rem", AlbumUri: " drem",
+				{URI: " second_uri", Name: "name2",
+					AlbumName: "rem", AlbumURI: " drem",
 					Artists: []model.Artist{
-						{Uri: "u3", Name: "n2"}, {Uri: "uri 3", Name: "name 3"},
+						{URI: "u3", Name: "n2"}, {URI: "uri 3", Name: "name 3"},
 					}},
 			},
 		},
 		{},
 		{
 			tracks{
-				{Uri: "sth", Name: "urk"},
+				{URI: "sth", Name: "urk"},
 			},
 			[]model.Track{
-				{Uri: "sth", Name: "urk"},
+				{URI: "sth", Name: "urk"},
 			},
 		},
 	}
@@ -164,7 +164,7 @@ type respMock struct {
 	} `json:"sths"`
 }
 
-func mockJson(data string) {
+func mockJSON(data string) {
 	getF = func(url string) (resp *http.Response, err error) {
 		resp = &http.Response{Body: &ReadClose{data: data}}
 		return
@@ -179,7 +179,7 @@ func Test_respF(t *testing.T) {
 			getF = gF
 		}
 	}()()
-	mockJson(`
+	mockJSON(`
 {"info": {"num_results": 1, "limit": 100, "offset": 0, "page": 1}, "sths": [{
 "name": "mocked name"}, {"name": "mocked name 2"}]}`)
 	rur := respMock{}
