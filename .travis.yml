@@ -1,12 +1,9 @@
 language: go
 go: 
- - 1.2
- - 1.3
  - release
  - tip
  
 install:
- - env
  - go get code.google.com/p/go.tools/cmd/vet
  - go get github.com/tools/godep
  - export PATH=${PATH}:${HOME}/gopath/bin

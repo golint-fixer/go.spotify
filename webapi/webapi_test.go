@@ -49,23 +49,12 @@ func Test_albums_data(t *testing.T) {
 		exp []model.Album
 	}{
 		{albums{
-			{URI: "some_uri", Name: " name1",
-				Artists: []artist{
-					{URI: "u1", Name: "n1"}, {URI: "u2", Name: "n2"}}},
-			{URI: " second_uri", Name: "name2",
-				Artists: []artist{
-					{URI: "u3", Name: "n2"},
-					{URI: "uri 3", Name: "name 3"}}},
+			{URI: "some_uri", Name: " name1"},
+			{URI: " second_uri", Name: "name2"},
 		},
 			[]model.Album{
-				{URI: "some_uri", Name: " name1",
-					Artists: []model.Artist{
-						{URI: "u1", Name: "n1"}, {URI: "u2", Name: "n2"},
-					}},
-				{URI: " second_uri", Name: "name2",
-					Artists: []model.Artist{
-						{URI: "u3", Name: "n2"}, {URI: "uri 3", Name: "name 3"},
-					}},
+				{URI: "some_uri", Name: " name1"},
+				{URI: " second_uri", Name: "name2"},
 			},
 		},
 		{},
@@ -90,11 +79,11 @@ func Test_albums_track(t *testing.T) {
 		exp []model.Track
 	}{
 		{tracks{
-			{URI: "some_uri", Name: " name1",
+			{track: track{URI: "some_uri", Name: " name1"},
 				Album: album{Name: "sur", URI: "kur"},
 				Artists: []artist{
 					{URI: "u1", Name: "n1"}, {URI: "u2", Name: "n2"}}},
-			{URI: " second_uri", Name: "name2",
+			{track: track{URI: " second_uri", Name: "name2"},
 				Album: album{Name: "rem", URI: " drem"},
 				Artists: []artist{
 					{URI: "u3", Name: "n2"},
@@ -116,7 +105,7 @@ func Test_albums_track(t *testing.T) {
 		{},
 		{
 			tracks{
-				{URI: "sth", Name: "urk"},
+				{track: track{URI: "sth", Name: "urk"}},
 			},
 			[]model.Track{
 				{URI: "sth", Name: "urk"},
@@ -158,9 +147,12 @@ func (rc *ReadClose) Read(p []byte) (n int, err error) {
 }
 
 type respMock struct {
-	Info respHeader `json:"info"`
-	Sths []struct {
-		Name string `json:"name"`
+	Sths struct {
+		Cats []struct {
+			Name  string `json:"name"`
+			Count int    `json:"count"`
+		} `json:"cats"`
+		respHeader
 	} `json:"sths"`
 }
 
@@ -180,18 +172,22 @@ func Test_respF(t *testing.T) {
 		}
 	}()()
 	mockJSON(`
-{"info": {"num_results": 1, "limit": 100, "offset": 0, "page": 1}, "sths": [{
-"name": "mocked name"}, {"name": "mocked name 2"}]}`)
+{"sths": {"next": null, "toal": 1, "cats": [{
+"name": "mocked name", "count" : 3},
+{"name": "mocked name 2", "count": 7}]}}`)
 	rur := respMock{}
-	eof, err := respF("", "", 0, &rur)
+	eof, err := respF("", "", 0, 5, &rur)
 	gophtu.Assert(t, err == nil, nil, err)
 	gophtu.Assert(t, eof, true, eof)
-	gophtu.Assert(t, len(rur.Sths) == 2, 2, len(rur.Sths))
-	gophtu.Check(t, rur.Sths[0].Name == "mocked name", "mocked name",
-		rur.Sths[0].Name)
-	gophtu.Check(t, rur.Sths[1].Name == "mocked name 2", "mocked name 2",
-		rur.Sths[1].Name)
-	eof, err = respF("", "", 0, &http.Response{})
+	gophtu.Assert(t, len(rur.Sths.Cats) == 2, 2, len(rur.Sths.Cats))
+	gophtu.Check(t, rur.Sths.Cats[0].Name == "mocked name", "mocked name",
+		rur.Sths.Cats[0].Name)
+	gophtu.Check(t, rur.Sths.Cats[1].Name == "mocked name 2", "mocked name 2",
+		rur.Sths.Cats[1].Name)
+	gophtu.Check(t, rur.Sths.Cats[0].Count == 3, 3, rur.Sths.Cats[0].Count)
+	gophtu.Check(t, rur.Sths.Cats[1].Count == 7, 7, rur.Sths.Cats[1].Count)
+
+	eof, err = respF("", "", 0, 0, &http.Response{})
 	gophtu.Assert(t, err == errInvResp, errInvResp, err)
 }
 
@@ -204,7 +200,7 @@ type searchStr []struct {
 
 func Test_SearchArtist(t *testing.T) {
 	cfg := searchStr{
-		{"In This Moment", nil, true, false}, {"łąśðəæóœę", nil, false, true}}
+		{"Wednesday 13", nil, true, false}, {"łąśðəæóœę", nil, false, true}}
 	for i, cfg := range cfg {
 		res, err := SearchArtist(cfg.search)
 		gophtu.Assert(t, reflect.DeepEqual(err, cfg.err), cfg.err, err, i)
@@ -220,7 +216,7 @@ func Test_SearchArtist(t *testing.T) {
 
 func Test_SearchAlbum(t *testing.T) {
 	cfg := searchStr{
-		{"Piece by Piece", nil, true, false}, {"łąśðəæóœę", nil, false, true}}
+		{"Oceanborn", nil, true, false}, {"łąśðəæóœę", nil, false, true}}
 	for i, cfg := range cfg {
 		res, err := SearchAlbum(cfg.search)
 		gophtu.Assert(t, reflect.DeepEqual(err, cfg.err), cfg.err, err, i)
