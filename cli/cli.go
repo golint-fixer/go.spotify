@@ -1,3 +1,6 @@
+// Package cli provides command line interface for ssc application
+// including: parsing arguments, handling specified arguments and printint out
+// obtained results.
 package cli
 
 import (
@@ -39,7 +42,6 @@ func NewApp() (app *sscc) {
 				{Name: "track", Usage: "Search for track.", Action: app.Track},
 			}},
 	}
-	webapi.Bar = true
 	return
 }
 
