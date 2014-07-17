@@ -4,14 +4,15 @@ go:
  - tip
  
 install:
+ - mkdir ${HOME}/bin
+ - export PATH=${PATH}:${HOME}/bin
+ - export GOBIN=${HOME}/bin
  - go get code.google.com/p/go.tools/cmd/vet
  - go get github.com/tools/godep
- - export PATH=${PATH}:${HOME}/gopath/bin
- - go install -a -race std
  - go get github.com/golang/lint/golint
 
 script:
  - golint .
  - godep restore
- - go tool vet -all .
+ - go vet ./...
  - godep go test -v -race ./...
