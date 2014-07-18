@@ -29,7 +29,7 @@ func NewApp() (app *sscc) {
 		{Name: "run", Usage: "Run Spotify desktop app.", Action: app.Start},
 		{Name: "kill", Usage: "Kill Spotify desktop app.", Action: app.Kill},
 		{Name: "next", Usage: "Play next track.", Action: app.Next},
-		{Name: "prev", Usage: "Play prev track..", Action: app.Prev},
+		{Name: "prev", Usage: "Play prev track.", Action: app.Prev},
 		{Name: "open", Usage: "Play music identified by uri.", Action: app.Open},
 		{Name: "seek", Usage: "Seek.", Action: app.Seek},
 		{Name: "play", Usage: "Play current track/uri/pos.", Action: app.Play},
