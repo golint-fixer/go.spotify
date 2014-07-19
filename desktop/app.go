@@ -15,28 +15,17 @@ const (
 )
 
 var (
-	cmd *exec.Cmd
-)
-
-func init() {
 	cmd = exec.Command(procName)
-}
-
-var (
-	errCmdInit = fmt.Errorf("desktop: failed to init command")
 )
 
 // Start spotify process.
 func Start() error {
-	if cmd == nil {
-		return errCmdInit
-	}
 	return cmd.Start()
 }
 
 // Kill spotify process.
 func Kill() error {
-	if cmd == nil || cmd.Process == nil {
+	if cmd.Process == nil {
 		if err := attach(); err != nil {
 			return err
 		}

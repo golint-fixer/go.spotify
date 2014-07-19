@@ -30,7 +30,6 @@ func TestStart(t *testing.T) {
 		cmd *exec.Cmd
 		err error
 	}{
-		{nil, errCmdInit},
 		{exec.Command(os.Args[0], "-test.run", "TestMockApp"), nil},
 	}
 	os.Setenv(testEnv, testEnv)

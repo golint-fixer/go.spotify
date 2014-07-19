@@ -47,7 +47,7 @@ func NewApp() (app *sscc) {
 
 var handleErr = func(err error) {
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("sscc: %q\n", err)
 		os.Exit(1)
 	}
 }
@@ -128,10 +128,10 @@ func (s *sscc) Track(ctx *cli.Context) {
 func validateSingle(args cli.Args) error {
 	n := len(args)
 	if n == 0 {
-		return fmt.Errorf("Please specify valid argument.")
+		return fmt.Errorf("please specify valid argument")
 	}
 	if n > 1 {
-		return fmt.Errorf("Invalid number of arguments.")
+		return fmt.Errorf("invalid number of arguments")
 	}
 	return nil
 }
