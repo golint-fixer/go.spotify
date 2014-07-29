@@ -33,8 +33,9 @@ VERSION:
 COMMANDS:
    run		Run Spotify desktop app.
    kill		Kill Spotify desktop app.
+   raise	Raise Spotify desktop app.
    next		Play next track.
-   prev		Play prev track..
+   prev		Play prev track.
    open		Play music identified by uri.
    seek		Seek.
    play		Play current track/uri/pos.

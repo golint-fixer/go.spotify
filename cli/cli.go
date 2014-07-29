@@ -28,6 +28,7 @@ func NewApp() (app *sscc) {
 	app.App.Commands = []cli.Command{
 		{Name: "run", Usage: "Run Spotify desktop app.", Action: app.Start},
 		{Name: "kill", Usage: "Kill Spotify desktop app.", Action: app.Kill},
+		{Name: "raise", Usage: "Raise Spotify desktop app.", Action: app.Raise},
 		{Name: "next", Usage: "Play next track.", Action: app.Next},
 		{Name: "prev", Usage: "Play prev track.", Action: app.Prev},
 		{Name: "open", Usage: "Play music identified by uri.", Action: app.Open},
@@ -55,6 +56,11 @@ var handleErr = func(err error) {
 // Start starts spotify app.
 func (s *sscc) Start(ctx *cli.Context) {
 	handleErr(desktop.Start())
+}
+
+// Raise raises spotify app's window.
+func (s *sscc) Raise(ctx *cli.Context) {
+	handleErr(desktop.Raise())
 }
 
 // Kill stops spotify app.
