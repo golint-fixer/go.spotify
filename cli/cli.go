@@ -4,6 +4,7 @@
 package cli
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"reflect"
@@ -38,10 +39,20 @@ func NewApp() (app *sscc) {
 		{Name: "toggle", Usage: "Play/Pause.", Action: app.Toggle},
 		{Name: "search", Usage: "Search for artist/album/track.",
 			Subcommands: []cli.Command{
-				{Name: "artist", Usage: "Search for artist.", Action: app.Artist},
-				{Name: "album", Usage: "Search for album.", Action: app.Album},
-				{Name: "track", Usage: "Search for track.", Action: app.Track},
-			}},
+				{Name: "artist", Usage: "Search for artist.", Action: app.Artist,
+					Flags: []cli.Flag{
+						cli.BoolFlag{Name: "i", Usage: "Quasi-interactive mode"}},
+				},
+				{Name: "album", Usage: "Search for album.", Action: app.Album,
+					Flags: []cli.Flag{
+						cli.BoolFlag{Name: "i", Usage: "Quasi-interactive mode"}},
+				},
+				{Name: "track", Usage: "Search for track.", Action: app.Track,
+					Flags: []cli.Flag{
+						cli.BoolFlag{Name: "i", Usage: "Quasi-interactive mode"}},
+				},
+			},
+		},
 	}
 	return
 }
@@ -107,12 +118,24 @@ func (s *sscc) Toggle(ctx *cli.Context) {
 	handleErr(desktop.PlayPause())
 }
 
+// interactive runs in limited interactive mode if configured.
+func interactive(ctx *cli.Context) {
+	if ctx.Bool("i") {
+		fmt.Print("Play: ")
+		r := bufio.NewReader(os.Stdin)
+		uri, _, err := r.ReadLine()
+		handleErr(err)
+		handleErr(desktop.OpenURI(string(uri)))
+	}
+}
+
 // Search for artist.
 func (s *sscc) Artist(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
 	r, err := webapi.SearchArtist(ctx.Args().First())
 	handleErr(err)
 	disp(r)
+	interactive(ctx)
 }
 
 // Search for album.
@@ -121,6 +144,7 @@ func (s *sscc) Album(ctx *cli.Context) {
 	r, err := webapi.SearchAlbum(ctx.Args().First())
 	handleErr(err)
 	disp(r)
+	interactive(ctx)
 }
 
 // Search for track.
@@ -129,6 +153,7 @@ func (s *sscc) Track(ctx *cli.Context) {
 	r, err := webapi.SearchTrack(ctx.Args().First())
 	handleErr(err)
 	disp(r)
+	interactive(ctx)
 }
 
 func validateSingle(args cli.Args) error {
