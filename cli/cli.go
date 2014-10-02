@@ -10,19 +10,17 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/pblaszczyk/sscc/desktop"
-	"github.com/pblaszczyk/sscc/webapi"
-
 	"github.com/codegangsta/cli"
+	"github.com/pblaszczyk/sscc"
 )
 
-type sscc struct {
+type impl struct {
 	*cli.App
 }
 
 // NewApp returns initialized instance of ssc struct.
-func NewApp() (app *sscc) {
-	app = &sscc{cli.NewApp()}
+func NewApp() (app *impl) {
+	app = &impl{cli.NewApp()}
 	app.App.Name = "sscc"
 	app.App.Version = "0.0.1"
 	app.App.Usage = "commandline controller of Spotify desktop app."
@@ -65,57 +63,57 @@ var handleErr = func(err error) {
 }
 
 // Start starts spotify app.
-func (s *sscc) Start(ctx *cli.Context) {
-	handleErr(desktop.Start())
+func (s *impl) Start(ctx *cli.Context) {
+	handleErr(sscc.Start())
 }
 
 // Raise raises spotify app's window.
-func (s *sscc) Raise(ctx *cli.Context) {
-	handleErr(desktop.Raise())
+func (s *impl) Raise(ctx *cli.Context) {
+	handleErr(sscc.Raise())
 }
 
 // Kill stops spotify app.
-func (s *sscc) Kill(ctx *cli.Context) {
-	handleErr(desktop.Kill())
+func (s *impl) Kill(ctx *cli.Context) {
+	handleErr(sscc.Kill())
 }
 
 // Next starts playing next track.
-func (s *sscc) Next(ctx *cli.Context) {
-	handleErr(desktop.Next())
+func (s *impl) Next(ctx *cli.Context) {
+	handleErr(sscc.Next())
 }
 
 // Prev starts playing prev track.
-func (s *sscc) Prev(ctx *cli.Context) {
-	handleErr(desktop.Prev())
+func (s *impl) Prev(ctx *cli.Context) {
+	handleErr(sscc.Prev())
 }
 
 // Open starts playing specified uri.
-func (s *sscc) Open(ctx *cli.Context) {
+func (s *impl) Open(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
-	handleErr(desktop.OpenURI(ctx.Args().First()))
+	handleErr(sscc.OpenURI(ctx.Args().First()))
 }
 
 // Open starts playing.
-func (s *sscc) Play(ctx *cli.Context) {
-	handleErr(desktop.Play())
+func (s *impl) Play(ctx *cli.Context) {
+	handleErr(sscc.Play())
 }
 
 // Seek pos.
-func (s *sscc) Seek(ctx *cli.Context) {
+func (s *impl) Seek(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
 	n, err := strconv.ParseInt(ctx.Args().First(), 10, 64)
 	handleErr(err)
-	handleErr(desktop.Seek(n))
+	handleErr(sscc.Seek(n))
 }
 
 // Stop playing current track.
-func (s *sscc) Stop(ctx *cli.Context) {
-	handleErr(desktop.Stop())
+func (s *impl) Stop(ctx *cli.Context) {
+	handleErr(sscc.Stop())
 }
 
 // Play/Pause current track.
-func (s *sscc) Toggle(ctx *cli.Context) {
-	handleErr(desktop.PlayPause())
+func (s *impl) Toggle(ctx *cli.Context) {
+	handleErr(sscc.PlayPause())
 }
 
 // interactive runs in limited interactive mode if configured.
@@ -125,32 +123,32 @@ func interactive(ctx *cli.Context) {
 		r := bufio.NewReader(os.Stdin)
 		uri, _, err := r.ReadLine()
 		handleErr(err)
-		handleErr(desktop.OpenURI(string(uri)))
+		handleErr(sscc.OpenURI(string(uri)))
 	}
 }
 
 // Search for artist.
-func (s *sscc) Artist(ctx *cli.Context) {
+func (s *impl) Artist(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
-	r, err := webapi.SearchArtist(ctx.Args().First())
+	r, err := sscc.SearchArtist(ctx.Args().First())
 	handleErr(err)
 	disp(r)
 	interactive(ctx)
 }
 
 // Search for album.
-func (s *sscc) Album(ctx *cli.Context) {
+func (s *impl) Album(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
-	r, err := webapi.SearchAlbum(ctx.Args().First())
+	r, err := sscc.SearchAlbum(ctx.Args().First())
 	handleErr(err)
 	disp(r)
 	interactive(ctx)
 }
 
 // Search for track.
-func (s *sscc) Track(ctx *cli.Context) {
+func (s *impl) Track(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
-	r, err := webapi.SearchTrack(ctx.Args().First())
+	r, err := sscc.SearchTrack(ctx.Args().First())
 	handleErr(err)
 	disp(r)
 	interactive(ctx)
