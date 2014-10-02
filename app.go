@@ -1,5 +1,4 @@
-// Package desktop stores function for controlling Spotify desktop application
-package desktop
+package sscc
 
 import (
 	"fmt"
@@ -44,11 +43,11 @@ func attach() (err error) {
 	}
 	l := strings.Split(strings.Trim(string(out), "\n"), " ")
 	if len(l) < 1 {
-		return fmt.Errorf("desktop: failed to get PID of %s", procName)
+		return fmt.Errorf("sscc: failed to get PID of %s", procName)
 	}
 	for _, v := range l {
 		if pid, err = strconv.Atoi(v); err != nil {
-			return fmt.Errorf("desktop: retrieved PID of %s is invalid: %s",
+			return fmt.Errorf("sscc: retrieved PID of %s is invalid: %s",
 				procName, v)
 		}
 		pids = append(pids, pid)

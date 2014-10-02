@@ -1,6 +1,4 @@
-// Package model contains models for results of searching
-// for artist/album/track.
-package model
+package sscc
 
 // Artist is a model for holding results of searching for artist.
 type Artist struct {

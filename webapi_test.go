@@ -1,4 +1,4 @@
-package webapi
+package sscc
 
 import (
 	"fmt"
@@ -8,20 +8,19 @@ import (
 	"testing"
 
 	"github.com/pblaszczyk/gophtu"
-	"github.com/pblaszczyk/sscc/model"
 )
 
 func Test_artists_data(t *testing.T) {
 	cfg := []struct {
 		a   artists
-		exp []model.Artist
+		exp []Artist
 	}{
 		{artists{
 			{URI: "some_uri", Name: " name1"},
 			{URI: " second_uri", Name: "name2"},
 			{URI: "uri 3", Name: "name 3"},
 		},
-			[]model.Artist{
+			[]Artist{
 				{URI: "some_uri", Name: " name1"},
 				{URI: " second_uri", Name: "name2"},
 				{URI: "uri 3", Name: "name 3"},
@@ -32,7 +31,7 @@ func Test_artists_data(t *testing.T) {
 			artists{
 				{URI: "sth", Name: "urk"},
 			},
-			[]model.Artist{
+			[]Artist{
 				{URI: "sth", Name: "urk"},
 			},
 		},
@@ -46,13 +45,13 @@ func Test_artists_data(t *testing.T) {
 func Test_albums_data(t *testing.T) {
 	cfg := []struct {
 		a   albums
-		exp []model.Album
+		exp []Album
 	}{
 		{albums{
 			{URI: "some_uri", Name: " name1"},
 			{URI: " second_uri", Name: "name2"},
 		},
-			[]model.Album{
+			[]Album{
 				{URI: "some_uri", Name: " name1"},
 				{URI: " second_uri", Name: "name2"},
 			},
@@ -62,7 +61,7 @@ func Test_albums_data(t *testing.T) {
 			albums{
 				{URI: "sth", Name: "urk"},
 			},
-			[]model.Album{
+			[]Album{
 				{URI: "sth", Name: "urk"},
 			},
 		},
@@ -76,7 +75,7 @@ func Test_albums_data(t *testing.T) {
 func Test_albums_track(t *testing.T) {
 	cfg := []struct {
 		a   tracks
-		exp []model.Track
+		exp []Track
 	}{
 		{tracks{
 			{track: track{URI: "some_uri", Name: " name1"},
@@ -89,15 +88,15 @@ func Test_albums_track(t *testing.T) {
 					{URI: "u3", Name: "n2"},
 					{URI: "uri 3", Name: "name 3"}}},
 		},
-			[]model.Track{
+			[]Track{
 				{URI: "some_uri", Name: " name1",
 					AlbumName: "sur", AlbumURI: "kur",
-					Artists: []model.Artist{
+					Artists: []Artist{
 						{URI: "u1", Name: "n1"}, {URI: "u2", Name: "n2"},
 					}},
 				{URI: " second_uri", Name: "name2",
 					AlbumName: "rem", AlbumURI: " drem",
-					Artists: []model.Artist{
+					Artists: []Artist{
 						{URI: "u3", Name: "n2"}, {URI: "uri 3", Name: "name 3"},
 					}},
 			},
@@ -107,7 +106,7 @@ func Test_albums_track(t *testing.T) {
 			tracks{
 				{track: track{URI: "sth", Name: "urk"}},
 			},
-			[]model.Track{
+			[]Track{
 				{URI: "sth", Name: "urk"},
 			},
 		},

@@ -1,6 +1,4 @@
-// Package webapi stores function for interacting with Spotify Web API.
-// It helps to find URI for looked up artists, albums or tracks.
-package webapi
+package sscc
 
 import (
 	"crypto/tls"
@@ -14,8 +12,6 @@ import (
 	"reflect"
 	"strings"
 	"time"
-
-	"github.com/pblaszczyk/sscc/model"
 )
 
 const (
@@ -128,9 +124,9 @@ type (
 )
 
 func (a *artists) data() interface{} {
-	var res []model.Artist
+	var res []Artist
 	for _, a := range []artist(*a) {
-		res = append(res, model.Artist{URI: a.URI, Name: a.Name})
+		res = append(res, Artist{URI: a.URI, Name: a.Name})
 	}
 	return res
 }
@@ -140,9 +136,9 @@ func (a *artistResp) data() interface{} {
 }
 
 func (a *albums) data() interface{} {
-	var res []model.Album
+	var res []Album
 	for _, a := range []album(*a) {
-		res = append(res, model.Album{URI: a.URI, Name: a.Name})
+		res = append(res, Album{URI: a.URI, Name: a.Name})
 	}
 	return res
 }
@@ -152,13 +148,13 @@ func (a *albumResp) data() interface{} {
 }
 
 func (a *tracks) data() interface{} {
-	var res []model.Track
+	var res []Track
 	for _, a := range []trackData(*a) {
-		var arts []model.Artist
+		var arts []Artist
 		for _, art := range a.Artists {
-			arts = append(arts, model.Artist{URI: art.URI, Name: art.Name})
+			arts = append(arts, Artist{URI: art.URI, Name: art.Name})
 		}
-		res = append(res, model.Track{URI: a.URI, Name: a.Name,
+		res = append(res, Track{URI: a.URI, Name: a.Name,
 			AlbumURI: a.Album.URI, AlbumName: a.Album.Name, Artists: arts})
 	}
 	return res
@@ -202,7 +198,7 @@ var respF = func(s, val string, off, lim int, resp interface{}) (bool, error) {
 
 // lookupAlbums goes through all obtained albums by search of album
 // and fills in data structure with information about their artists.
-func lookupAlbums(res *[]model.Album) error {
+func lookupAlbums(res *[]Album) error {
 	for i := range *res {
 		r, err := getF(fmt.Sprintf(lookupURL, lookupAlbum,
 			strings.TrimPrefix((*res)[i].URI, "spotify:album:")))
@@ -220,7 +216,7 @@ func lookupAlbums(res *[]model.Album) error {
 		}
 		for j := range resp.Artists {
 			(*res)[i].Artists = append((*res)[i].Artists,
-				model.Artist{URI: resp.Artists[j].URI, Name: resp.Artists[j].Name})
+				Artist{URI: resp.Artists[j].URI, Name: resp.Artists[j].Name})
 		}
 	}
 	return nil
@@ -235,13 +231,13 @@ func search(search, val string) (interface{}, error) {
 	switch search {
 	case searchArtist:
 		v = &artistResp{}
-		res = reflect.New(reflect.TypeOf([]model.Artist{}))
+		res = reflect.New(reflect.TypeOf([]Artist{}))
 	case searchAlbum:
 		v = &albumResp{}
-		res = reflect.New(reflect.TypeOf([]model.Album{}))
+		res = reflect.New(reflect.TypeOf([]Album{}))
 	case searchTrack:
 		v = &trackResp{}
-		res = reflect.New(reflect.TypeOf([]model.Track{}))
+		res = reflect.New(reflect.TypeOf([]Track{}))
 	default:
 		return nil, errUnsupSearch
 	}
@@ -261,21 +257,21 @@ func search(search, val string) (interface{}, error) {
 }
 
 // SearchArtist searches for artist.
-func SearchArtist(artist string) ([]model.Artist, error) {
+func SearchArtist(artist string) ([]Artist, error) {
 	r, err := search(searchArtist, artist)
 	if err != nil {
 		return nil, err
 	}
-	return r.([]model.Artist), nil
+	return r.([]Artist), nil
 }
 
 // SearchAlbum searches for album.
-func SearchAlbum(album string) ([]model.Album, error) {
+func SearchAlbum(album string) ([]Album, error) {
 	r, err := search(searchAlbum, album)
 	if err != nil {
 		return nil, err
 	}
-	res := r.([]model.Album)
+	res := r.([]Album)
 	err = lookupAlbums(&res)
 	if err != nil {
 		return nil, err
@@ -284,10 +280,10 @@ func SearchAlbum(album string) ([]model.Album, error) {
 }
 
 // SearchTrack searches for track.
-func SearchTrack(track string) ([]model.Track, error) {
+func SearchTrack(track string) ([]Track, error) {
 	r, err := search(searchTrack, track)
 	if err != nil {
 		return nil, err
 	}
-	return r.([]model.Track), nil
+	return r.([]Track), nil
 }

@@ -1,10 +1,7 @@
-package desktop
+package sscc
 
-import (
-	"fmt"
-
-	idbus "github.com/guelfey/go.dbus"
-)
+import "fmt"
+import "github.com/guelfey/go.dbus"
 
 const (
 	dest               = "org.mpris.MediaPlayer2.spotify"
@@ -49,8 +46,8 @@ const (
 	methodMachineID    = "org.freedesktop.DBus.Peer.GetMachineId"
 )
 
-var initDbus = func() (*idbus.Object, error) {
-	c, err := idbus.SessionBus()
+var initDbus = func() (*dbus.Object, error) {
+	c, err := dbus.SessionBus()
 	if err != nil {
 		return nil, fmt.Errorf("dbus: failed to init dbus session: %q", err.Error())
 	}
@@ -104,7 +101,7 @@ func SetPos(trackID string, pos int64) error {
 	if err != nil {
 		return err
 	}
-	call := o.Call(methodSetPos, 0, idbus.ObjectPath(trackID), pos)
+	call := o.Call(methodSetPos, 0, dbus.ObjectPath(trackID), pos)
 	return call.Err
 }
 
