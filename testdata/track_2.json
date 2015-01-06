@@ -1,0 +1,65 @@
+{
+  "tracks" : {
+    "href" : "https://api.spotify.com/v1/search?query=Tenacious&offset=505&limit=5&type=track",
+    "items" : [ {
+      "album" : {
+        "album_type" : "album",
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "IE", "IS", "IT", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "RO", "SE", "SG", "SI", "SK", "SV", "TR", "TW", "US", "UY" ],
+        "external_urls" : {
+          "spotify" : "https://open.spotify.com/album/4zb12kro15pJa2YG1uEcmR"
+        },
+        "href" : "https://api.spotify.com/v1/albums/4zb12kro15pJa2YG1uEcmR",
+        "id" : "4zb12kro15pJa2YG1uEcmR",
+        "images" : [ {
+          "height" : 640,
+          "url" : "https://i.scdn.co/image/894e3518c5b452a60b0550f8a93bc1b11e5be452",
+          "width" : 640
+        }, {
+          "height" : 300,
+          "url" : "https://i.scdn.co/image/221326b43028ae0665f15850e4916a597f1a8c68",
+          "width" : 300
+        }, {
+          "height" : 64,
+          "url" : "https://i.scdn.co/image/f58d9d5a4e4e5a42a5ff56033ae3a5cd65269fcd",
+          "width" : 64
+        } ],
+        "name" : "Drew's Famous #1 Karaoke Hits: Sing Like Tenacious D, Flight of the Conchords, & Friends",
+        "type" : "album",
+        "uri" : "spotify:album:4zb12kro15pJa2YG1uEcmR"
+      },
+      "artists" : [ {
+        "external_urls" : {
+          "spotify" : "https://open.spotify.com/artist/0GRelLAVHzwasg0Ja7gJUy"
+        },
+        "href" : "https://api.spotify.com/v1/artists/0GRelLAVHzwasg0Ja7gJUy",
+        "id" : "0GRelLAVHzwasg0Ja7gJUy",
+        "name" : "The Karaoke Crew",
+        "type" : "artist",
+        "uri" : "spotify:artist:0GRelLAVHzwasg0Ja7gJUy"
+      } ],
+      "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "IE", "IS", "IT", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "RO", "SE", "SG", "SI", "SK", "SV", "TR", "TW", "US", "UY" ],
+      "disc_number" : 1,
+      "duration_ms" : 169567,
+      "explicit" : false,
+      "external_ids" : {
+        "isrc" : "USTXK1000343"
+      },
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/track/7jxSwduTONaRn00SQQbInK"
+      },
+      "href" : "https://api.spotify.com/v1/tracks/7jxSwduTONaRn00SQQbInK",
+      "id" : "7jxSwduTONaRn00SQQbInK",
+      "name" : "White and Nerdy (Karaoke Version)",
+      "popularity" : 1,
+      "preview_url" : "https://p.scdn.co/mp3-preview/2289c8bafe8705baf8ac86688cfae6d9b436a3b9",
+      "track_number" : 18,
+      "type" : "track",
+      "uri" : "spotify:track:7jxSwduTONaRn00SQQbInK"
+    } ],
+    "limit" : 2,
+    "next" : null,
+    "offset" : 2,
+    "previous" : "https://api.spotify.com/v1/search?query=Tenacious&offset=500&limit=5&type=track",
+    "total" : 3
+  }
+}

@@ -1,7 +1,10 @@
 package sscc
 
-import "fmt"
-import "github.com/guelfey/go.dbus"
+import (
+	"fmt"
+
+	dbs "github.com/guelfey/go.dbus"
+)
 
 const (
 	dest               = "org.mpris.MediaPlayer2.spotify"
@@ -46,90 +49,124 @@ const (
 	methodMachineID    = "org.freedesktop.DBus.Peer.GetMachineId"
 )
 
-var initDbus = func() (*dbus.Object, error) {
-	c, err := dbus.SessionBus()
+// Dbuser is an interface for operations on Spotify desktop application's dbus
+// interface.
+type Dbuser interface {
+	Open(URI) error          // Open starts playing track with provided URI.
+	Play() error             // Play plays currently set track.
+	Stop() error             // Stop stops playing current track.
+	Pause() error            // Pause pauses currently played track.
+	Toggle() error           // Toggle toggles between play & pause state.
+	Next() error             // Next plays next track.
+	Prev() error             // Prev plays previous track.
+	Goto(int64) error        // Goto seeks for offset µs.
+	SetPos(URI, int64) error // SetPos goes to specified position for track.
+	Raise() error            // Raise raises Spotify app.
+	Quit() error             // Quit quits Spotify app.
+	Track() (Track, error)   // Track returns currently played track.
+}
+
+type dbus struct {
+	o      *dbs.Object
+	initer dbusInit
+}
+
+func newDbus() *dbus {
+	return &dbus{initer: initDbus}
+}
+
+var defaultDbus = newDbus()
+
+type dbusInit func() (*dbs.Object, error)
+
+func initDbus() (*dbs.Object, error) {
+	c, err := dbs.SessionBus()
 	if err != nil {
-		return nil, fmt.Errorf("dbus: failed to init dbus session: %q", err.Error())
+		return nil, fmt.Errorf("sscc: failed to init dbus session: %q", err.Error())
 	}
 	return c.Object(dest, objPath), nil
 }
 
-// Next plays next track from currently played playlist.
-func Next() error {
-	return noArgsMethod(methodNext)
+func (d *dbus) init() (err error) {
+	if d.o != nil {
+		return
+	}
+	d.o, err = d.initer()
+	return
 }
 
-// Prev plays previous track from currently played playlist.
-func Prev() error {
-	return noArgsMethod(methodPrev)
+// Next implements `Dbuser`.
+func (d *dbus) Next() error {
+	return d.noArgsMethod(methodNext)
 }
 
-// Pause pauses currently played track.
-func Pause() error {
-	return noArgsMethod(methodPause)
+// Prev implements `Dbuser`.
+func (d *dbus) Prev() error {
+	return d.noArgsMethod(methodPrev)
 }
 
-// PlayPause toggles between play & pause state.
-func PlayPause() error {
-	return noArgsMethod(methodPlayPause)
+// Pause implements `Dbuser`.
+func (d *dbus) Pause() error {
+	return d.noArgsMethod(methodPause)
 }
 
-// Stop stops playing current track.
-func Stop() error {
-	return noArgsMethod(methodStop)
+// Toggle implements `Dbuser`.
+func (d *dbus) Toggle() error {
+	return d.noArgsMethod(methodPlayPause)
 }
 
-// Play plays currently set track.
-func Play() error {
-	return noArgsMethod(methodPlay)
+// Stop implements `Dbuser`.
+func (d *dbus) Stop() error {
+	return d.noArgsMethod(methodStop)
 }
 
-// Seek seeks for offset µs. Negative offset means seeking back.
-func Seek(offset int64) error {
-	o, err := initDbus()
-	if err != nil {
+// Play implements `Dbuser`.
+func (d *dbus) Play() error {
+	return d.noArgsMethod(methodPlay)
+}
+
+// Goto implements `Dbuser`.
+func (d *dbus) Goto(offset int64) error {
+	if err := d.init(); err != nil {
 		return err
 	}
-	call := o.Call(methodSeek, 0, offset)
-	return call.Err
+	return d.o.Call(methodSeek, 0, offset).Err
 }
 
-// SetPos goes to specified position in currently set track.
-// trackID must be equal to currently set track.
-func SetPos(trackID string, pos int64) error {
-	o, err := initDbus()
-	if err != nil {
+// SetPos implements `Dbuser`.
+func (d *dbus) SetPos(trackID URI, pos int64) error {
+	if err := d.init(); err != nil {
 		return err
 	}
-	call := o.Call(methodSetPos, 0, dbus.ObjectPath(trackID), pos)
-	return call.Err
+	return d.o.Call(methodSetPos, 0, dbs.ObjectPath(string(trackID)), pos).Err
 }
 
-// OpenURI starts playing track with provided uri.
-func OpenURI(uri string) error {
-	o, err := initDbus()
-	if err != nil {
+// Open implements `Dbuser`.
+func (d *dbus) Open(uri URI) error {
+	if err := d.init(); err != nil {
 		return err
 	}
-	call := o.Call(methodOpenURI, 0, uri)
-	return call.Err
+	return d.o.Call(methodOpenURI, 0, string(uri)).Err
 }
 
-// Quit quits spotify process.
-func Quit() error {
-	return noArgsMethod(methodQuit)
+// Quit implements `Dbuser`.
+func (d *dbus) Quit() error {
+	return d.noArgsMethod(methodQuit)
 }
 
-// Raise raises spotify player.
-func Raise() error {
-	return noArgsMethod(methodRaise)
+// Raise implements `Dbuser`.
+func (d *dbus) Raise() error {
+	return d.noArgsMethod(methodRaise)
 }
 
-func noArgsMethod(method string) error {
-	o, err := initDbus()
-	if err != nil {
+// Track implements `Dbuser`.
+func (d *dbus) Track() (Track, error) {
+	panic("sscc: not implemented")
+}
+
+func (d *dbus) noArgsMethod(method string) error {
+	if err := d.init(); err != nil {
 		return err
 	}
-	call := o.Call(method, 0)
-	return call.Err
+	return d.o.Call(method, 0).Err
 }

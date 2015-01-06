@@ -1,0 +1,131 @@
+{
+  "albums" : {
+    "href" : "https://api.spotify.com/v1/search?query=Tenacious&offset=5&limit=5&type=album",
+    "items" : [ {
+      "album_type" : "single",
+      "available_markets" : [ "AT", "BE", "CA", "CH", "DE", "EE", "FI", "GB", "GT", "HN", "IE", "LI", "LT", "LU", "LV", "NI", "NL", "PA", "PE", "SE", "SV" ],
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/album/4LJbsUCNTcNNNHNiX6qES1"
+      },
+      "href" : "https://api.spotify.com/v1/albums/4LJbsUCNTcNNNHNiX6qES1",
+      "id" : "4LJbsUCNTcNNNHNiX6qES1",
+      "images" : [ {
+        "height" : 632,
+        "url" : "https://i.scdn.co/image/09f7b9135d24d6c1d68167490ef5ae7ad2fe0bdc",
+        "width" : 640
+      }, {
+        "height" : 296,
+        "url" : "https://i.scdn.co/image/42a9e3e63fd224c11358f40480b1147a96c093d8",
+        "width" : 300
+      }, {
+        "height" : 63,
+        "url" : "https://i.scdn.co/image/0b271339d65191ae6296fe8a28f052ca8146b767",
+        "width" : 64
+      } ],
+      "name" : "POD",
+      "type" : "album",
+      "uri" : "spotify:album:4LJbsUCNTcNNNHNiX6qES1"
+    }, {
+      "album_type" : "album",
+      "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "IE", "IS", "IT", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "RO", "SE", "SG", "SI", "SK", "SV", "TR", "TW", "US", "UY" ],
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/album/33LXyaRjDrMZILnvp1umPU"
+      },
+      "href" : "https://api.spotify.com/v1/albums/33LXyaRjDrMZILnvp1umPU",
+      "id" : "33LXyaRjDrMZILnvp1umPU",
+      "images" : [ {
+        "height" : 640,
+        "url" : "https://i.scdn.co/image/3e77866345188f1b247b60a9eb410b6fd60f0911",
+        "width" : 640
+      }, {
+        "height" : 300,
+        "url" : "https://i.scdn.co/image/bf51fef0121397baa5d6fa50bec815f6c82a7699",
+        "width" : 300
+      }, {
+        "height" : 64,
+        "url" : "https://i.scdn.co/image/6216631b8e1a0974040d5f79d27298f3bc5b02a0",
+        "width" : 64
+      } ],
+      "name" : "Tenacious",
+      "type" : "album",
+      "uri" : "spotify:album:33LXyaRjDrMZILnvp1umPU"
+    }, {
+      "album_type" : "album",
+      "available_markets" : [ "AD", "AR", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GR", "GT", "HK", "HN", "HU", "IS", "IT", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "RO", "SG", "SI", "SK", "SV", "TR", "TW", "US", "UY" ],
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/album/7mv1ciCld5Bp1y6TDGtjQY"
+      },
+      "href" : "https://api.spotify.com/v1/albums/7mv1ciCld5Bp1y6TDGtjQY",
+      "id" : "7mv1ciCld5Bp1y6TDGtjQY",
+      "images" : [ {
+        "height" : 640,
+        "url" : "https://i.scdn.co/image/2535fc0a1ed203642bfc74e6420e86fb1129cd38",
+        "width" : 640
+      }, {
+        "height" : 300,
+        "url" : "https://i.scdn.co/image/dad8f09fb2cccceb050c254381576b3a92580018",
+        "width" : 300
+      }, {
+        "height" : 64,
+        "url" : "https://i.scdn.co/image/60f3b3525461acea4691ac624f015c181168a977",
+        "width" : 64
+      } ],
+      "name" : "Tenacious D",
+      "type" : "album",
+      "uri" : "spotify:album:7mv1ciCld5Bp1y6TDGtjQY"
+    }, {
+      "album_type" : "album",
+      "available_markets" : [ "AU", "HK", "MY", "NZ", "PH", "SG", "TW" ],
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/album/0zPvqiP3ZmCyYgXdupvdBi"
+      },
+      "href" : "https://api.spotify.com/v1/albums/0zPvqiP3ZmCyYgXdupvdBi",
+      "id" : "0zPvqiP3ZmCyYgXdupvdBi",
+      "images" : [ {
+        "height" : 636,
+        "url" : "https://i.scdn.co/image/68820054e93e3686cd69eb38b3811da7fbfc1d55",
+        "width" : 640
+      }, {
+        "height" : 298,
+        "url" : "https://i.scdn.co/image/7831df51d92f2f818d632787210e4f9648e8598d",
+        "width" : 300
+      }, {
+        "height" : 64,
+        "url" : "https://i.scdn.co/image/08065f9b085b4d1f2331a1a8bc28ad5c5124083d",
+        "width" : 64
+      } ],
+      "name" : "Tenacious D",
+      "type" : "album",
+      "uri" : "spotify:album:0zPvqiP3ZmCyYgXdupvdBi"
+    }, {
+      "album_type" : "album",
+      "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "IE", "IS", "IT", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "RO", "SE", "SG", "SI", "SK", "SV", "TR", "TW", "US", "UY" ],
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/album/6PjFFuDv6tnIlwyT33ugdj"
+      },
+      "href" : "https://api.spotify.com/v1/albums/6PjFFuDv6tnIlwyT33ugdj",
+      "id" : "6PjFFuDv6tnIlwyT33ugdj",
+      "images" : [ {
+        "height" : 640,
+        "url" : "https://i.scdn.co/image/3101137d74b460e599cb9e65cc4ead749bec4ae1",
+        "width" : 640
+      }, {
+        "height" : 300,
+        "url" : "https://i.scdn.co/image/49aae30ea33ed6c68b33fc88cf881301428e30f3",
+        "width" : 300
+      }, {
+        "height" : 64,
+        "url" : "https://i.scdn.co/image/96c70f4e13d879a04ce79a57290264b08d9bdc64",
+        "width" : 64
+      } ],
+      "name" : "Best In Da State, Vol. 1",
+      "type" : "album",
+      "uri" : "spotify:album:6PjFFuDv6tnIlwyT33ugdj"
+    } ],
+    "limit" : 5,
+    "next" : "https://api.spotify.com/v1/search?query=Tenacious&offset=10&limit=5&type=album",
+    "offset" : 5,
+    "previous" : "https://api.spotify.com/v1/search?query=Tenacious&offset=0&limit=5&type=album",
+    "total" : 53
+  }
+}

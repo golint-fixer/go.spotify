@@ -1,0 +1,35 @@
+{
+  "albums" : {
+    "href" : "https://api.spotify.com/v1/search?query=Tenacious&offset=5&limit=5&type=album",
+    "items" : [ {
+      "album_type" : "single",
+      "available_markets" : [ "AT", "BE", "CA", "CH", "DE", "EE", "FI", "GB", "GT", "HN", "IE", "LI", "LT", "LU", "LV", "NI", "NL", "PA", "PE", "SE", "SV" ],
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/album/4LJbsUCNTcNNNHNiX6qES1"
+      },
+      "href" : "https://api.spotify.com/v1/albums/4LJbsUCNTcNNNHNiX6qES1",
+      "id" : "4LJbsUCNTcNNNHNiX6qES1",
+      "images" : [ {
+        "height" : 632,
+        "url" : "https://i.scdn.co/image/09f7b9135d24d6c1d68167490ef5ae7ad2fe0bdc",
+        "width" : 640
+      }, {
+        "height" : 296,
+        "url" : "https://i.scdn.co/image/42a9e3e63fd224c11358f40480b1147a96c093d8",
+        "width" : 300
+      }, {
+        "height" : 63,
+        "url" : "https://i.scdn.co/image/0b271339d65191ae6296fe8a28f052ca8146b767",
+        "width" : 64
+      } ],
+      "name" : "POD",
+      "type" : "album",
+      "uri" : "spotify:album:4LJbsUCNTcNNNHNiX6qES1"
+    } ],
+    "limit" : 5,
+    "next" : null,
+    "offset" : 5,
+    "previous" : "https://api.spotify.com/v1/search?query=Tenacious&offset=0&limit=5&type=album",
+    "total" : 6
+  }
+}

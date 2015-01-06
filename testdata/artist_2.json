@@ -1,0 +1,23 @@
+{
+  "artists" : {
+    "href" : "https://api.spotify.com/v1/search?query=Tenacious&offset=5&limit=5&type=artist",
+    "items" : [ {
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/artist/4FUej2oub0ZMSAfSpVpc4H"
+      },
+      "genres" : [ ],
+      "href" : "https://api.spotify.com/v1/artists/4FUej2oub0ZMSAfSpVpc4H",
+      "id" : "4FUej2oub0ZMSAfSpVpc4H",
+      "images" : [ ],
+      "name" : "M.T.T.S. (Ty Bru, Medic, Tenacious)",
+      "popularity" : 0,
+      "type" : "artist",
+      "uri" : "spotify:artist:4FUej2oub0ZMSAfSpVpc4H"
+    } ],
+    "limit" : 5,
+    "next" : null,
+    "offset" : 5,
+    "previous" : "https://api.spotify.com/v1/search?query=Tenacious&offset=0&limit=5&type=artist",
+    "total" : 6
+  }
+}

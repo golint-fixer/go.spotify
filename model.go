@@ -1,25 +1,33 @@
 package sscc
 
-// Artist is a model for holding results of searching for artist.
+// URI is a type representing Spotify URI.
+type URI string
+
+// Artist is a model for artist's data.
 type Artist struct {
-	URI  string
-	Name string
+	URI  string // URI is a Spotify URI of the artist.
+	Name string // Name of the artist.
 }
 
-// Album is a model for holding results of searching for album.
+// Album is a model for album's data.
 type Album struct {
-	URI     string
-	Name    string
-	Artists []Artist
+	URI     string   // URI is a Spotify URI of the album.
+	Name    string   // Name is the name of the album.
+	Artists []Artist // Artists is a list of artists of the album.
 }
 
-// Track is a model for holding results of searching for track.
+// Track is a model for track's data.
 type Track struct {
-	URI       string
-	Name      string
-	AlbumURI  string
-	AlbumName string
-	Artists   []Artist
+	URI       string   // URI is a Spotify URI of the track.
+	Name      string   // Name is the name of the track.
+	AlbumURI  string   // AlbumURI is a URI of album containing track.
+	AlbumName string   // AlbumName is the name of album containing track.
+	Artists   []Artist // Artists is a list of artists of the track.
+}
+
+type respHeader struct {
+	Total int     `json:"total"`
+	Next  *string `json:"next"`
 }
 
 type (
@@ -74,44 +82,3 @@ type (
 		} `json:"tracks"`
 	}
 )
-
-func (a *artists) data() interface{} {
-	var res []Artist
-	for _, a := range []artist(*a) {
-		res = append(res, Artist{URI: a.URI, Name: a.Name})
-	}
-	return res
-}
-
-func (a *artistResp) data() interface{} {
-	return a.Artists.Items.data()
-}
-
-func (a *albums) data() interface{} {
-	var res []Album
-	for _, a := range []album(*a) {
-		res = append(res, Album{URI: a.URI, Name: a.Name})
-	}
-	return res
-}
-
-func (a *albumResp) data() interface{} {
-	return a.Albums.Items.data()
-}
-
-func (a *tracks) data() interface{} {
-	var res []Track
-	for _, a := range []trackData(*a) {
-		var arts []Artist
-		for _, art := range a.Artists {
-			arts = append(arts, Artist{URI: art.URI, Name: art.Name})
-		}
-		res = append(res, Track{URI: a.URI, Name: a.Name,
-			AlbumURI: a.Album.URI, AlbumName: a.Album.Name, Artists: arts})
-	}
-	return res
-}
-
-func (a *trackResp) data() interface{} {
-	return a.Tracks.Items.data()
-}

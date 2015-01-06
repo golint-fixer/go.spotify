@@ -1,0 +1,119 @@
+{
+  "tracks" : {
+    "href" : "https://api.spotify.com/v1/search?query=Tenacious&offset=0&limit=2&type=track",
+    "items" : [ {
+      "album" : {
+        "album_type" : "album",
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "IE", "IS", "IT", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "RO", "SE", "SG", "SI", "SK", "SV", "TR", "TW", "UY" ],
+        "external_urls" : {
+          "spotify" : "https://open.spotify.com/album/1AckkxSo39144vOBrJ1GkS"
+        },
+        "href" : "https://api.spotify.com/v1/albums/1AckkxSo39144vOBrJ1GkS",
+        "id" : "1AckkxSo39144vOBrJ1GkS",
+        "images" : [ {
+          "height" : 640,
+          "url" : "https://i.scdn.co/image/9c902fbc3ed7c6bed33cff31138ba6613f66c0a3",
+          "width" : 640
+        }, {
+          "height" : 300,
+          "url" : "https://i.scdn.co/image/a8102beffbb0c1103f82da8f318b6f8cbaeb2e9b",
+          "width" : 300
+        }, {
+          "height" : 64,
+          "url" : "https://i.scdn.co/image/f84ec360390df3c74be45473fbf301a0d7e90d5b",
+          "width" : 64
+        } ],
+        "name" : "Tenacious D",
+        "type" : "album",
+        "uri" : "spotify:album:1AckkxSo39144vOBrJ1GkS"
+      },
+      "artists" : [ {
+        "external_urls" : {
+          "spotify" : "https://open.spotify.com/artist/1XpDYCrUJnvCo9Ez6yeMWh"
+        },
+        "href" : "https://api.spotify.com/v1/artists/1XpDYCrUJnvCo9Ez6yeMWh",
+        "id" : "1XpDYCrUJnvCo9Ez6yeMWh",
+        "name" : "Tenacious D",
+        "type" : "artist",
+        "uri" : "spotify:artist:1XpDYCrUJnvCo9Ez6yeMWh"
+      } ],
+      "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "IE", "IS", "IT", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "RO", "SE", "SG", "SI", "SK", "SV", "TR", "TW", "UY" ],
+      "disc_number" : 1,
+      "duration_ms" : 248053,
+      "explicit" : true,
+      "external_ids" : {
+        "isrc" : "USSM10108746"
+      },
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/track/6crBy2sODw2HS53xquM6us"
+      },
+      "href" : "https://api.spotify.com/v1/tracks/6crBy2sODw2HS53xquM6us",
+      "id" : "6crBy2sODw2HS53xquM6us",
+      "name" : "Tribute",
+      "popularity" : 67,
+      "preview_url" : "https://p.scdn.co/mp3-preview/88df5e12cefb3c295e11177f57fa7f34d744c787",
+      "track_number" : 3,
+      "type" : "track",
+      "uri" : "spotify:track:6crBy2sODw2HS53xquM6us"
+    }, {
+      "album" : {
+        "album_type" : "album",
+        "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "IE", "IS", "IT", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "RO", "SE", "SG", "SI", "SK", "SV", "TR", "TW", "UY" ],
+        "external_urls" : {
+          "spotify" : "https://open.spotify.com/album/1AckkxSo39144vOBrJ1GkS"
+        },
+        "href" : "https://api.spotify.com/v1/albums/1AckkxSo39144vOBrJ1GkS",
+        "id" : "1AckkxSo39144vOBrJ1GkS",
+        "images" : [ {
+          "height" : 640,
+          "url" : "https://i.scdn.co/image/9c902fbc3ed7c6bed33cff31138ba6613f66c0a3",
+          "width" : 640
+        }, {
+          "height" : 300,
+          "url" : "https://i.scdn.co/image/a8102beffbb0c1103f82da8f318b6f8cbaeb2e9b",
+          "width" : 300
+        }, {
+          "height" : 64,
+          "url" : "https://i.scdn.co/image/f84ec360390df3c74be45473fbf301a0d7e90d5b",
+          "width" : 64
+        } ],
+        "name" : "Tenacious D",
+        "type" : "album",
+        "uri" : "spotify:album:1AckkxSo39144vOBrJ1GkS"
+      },
+      "artists" : [ {
+        "external_urls" : {
+          "spotify" : "https://open.spotify.com/artist/1XpDYCrUJnvCo9Ez6yeMWh"
+        },
+        "href" : "https://api.spotify.com/v1/artists/1XpDYCrUJnvCo9Ez6yeMWh",
+        "id" : "1XpDYCrUJnvCo9Ez6yeMWh",
+        "name" : "Tenacious D",
+        "type" : "artist",
+        "uri" : "spotify:artist:1XpDYCrUJnvCo9Ez6yeMWh"
+      } ],
+      "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CA", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "IE", "IS", "IT", "LI", "LT", "LU", "LV", "MC", "MT", "MX", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "RO", "SE", "SG", "SI", "SK", "SV", "TR", "TW", "UY" ],
+      "disc_number" : 1,
+      "duration_ms" : 123666,
+      "explicit" : true,
+      "external_ids" : {
+        "isrc" : "USSM10108754"
+      },
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/track/3USOTQdPtZlgVurwaqsdI5"
+      },
+      "href" : "https://api.spotify.com/v1/tracks/3USOTQdPtZlgVurwaqsdI5",
+      "id" : "3USOTQdPtZlgVurwaqsdI5",
+      "name" : "Fuck Her Gently",
+      "popularity" : 63,
+      "preview_url" : "https://p.scdn.co/mp3-preview/766138830c7ec8333aeac782f2345192d1ef96b5",
+      "track_number" : 6,
+      "type" : "track",
+      "uri" : "spotify:track:3USOTQdPtZlgVurwaqsdI5"
+    } ],
+    "limit" : 2,
+    "next" : "https://api.spotify.com/v1/search?query=Tenacious&offset=2&limit=2&type=track",
+    "offset" : 0,
+    "previous" : null,
+    "total" : 506
+  }
+}

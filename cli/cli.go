@@ -1,6 +1,3 @@
-// Package cli provides command line interface for ssc application
-// including: parsing arguments, handling specified arguments and printint out
-// obtained results.
 package cli
 
 import (
@@ -16,11 +13,16 @@ import (
 
 type impl struct {
 	*cli.App
+	ctrl sscc.Controller
 }
 
 // NewApp returns initialized instance of ssc struct.
 func NewApp() (app *impl) {
-	app = &impl{cli.NewApp()}
+	ctrl, err := sscc.NewControl()
+	if err != nil {
+		panic(err)
+	}
+	app = &impl{cli.NewApp(), ctrl}
 	app.App.Name = "sscc"
 	app.App.Version = "0.0.1"
 	app.App.Usage = "commandline controller of Spotify desktop app."
@@ -56,7 +58,10 @@ func NewApp() (app *impl) {
 }
 
 var handleErr = func(err error) {
-	if err != nil {
+	switch {
+	case sscc.IsEOF(err) || err == nil:
+		return
+	default:
 		fmt.Printf("sscc: %q\n", err)
 		os.Exit(1)
 	}
@@ -64,38 +69,38 @@ var handleErr = func(err error) {
 
 // Start starts spotify app.
 func (s *impl) Start(ctx *cli.Context) {
-	handleErr(sscc.Start())
+	handleErr(s.ctrl.Run())
 }
 
 // Raise raises spotify app's window.
 func (s *impl) Raise(ctx *cli.Context) {
-	handleErr(sscc.Raise())
+	handleErr(s.ctrl.Raise())
 }
 
 // Kill stops spotify app.
 func (s *impl) Kill(ctx *cli.Context) {
-	handleErr(sscc.Kill())
+	handleErr(s.ctrl.Kill())
 }
 
 // Next starts playing next track.
 func (s *impl) Next(ctx *cli.Context) {
-	handleErr(sscc.Next())
+	handleErr(s.ctrl.Next())
 }
 
 // Prev starts playing prev track.
 func (s *impl) Prev(ctx *cli.Context) {
-	handleErr(sscc.Prev())
+	handleErr(s.ctrl.Prev())
 }
 
 // Open starts playing specified uri.
 func (s *impl) Open(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
-	handleErr(sscc.OpenURI(ctx.Args().First()))
+	handleErr(s.ctrl.Open(sscc.URI(ctx.Args().First())))
 }
 
 // Open starts playing.
 func (s *impl) Play(ctx *cli.Context) {
-	handleErr(sscc.Play())
+	handleErr(s.ctrl.Play())
 }
 
 // Seek pos.
@@ -103,55 +108,82 @@ func (s *impl) Seek(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
 	n, err := strconv.ParseInt(ctx.Args().First(), 10, 64)
 	handleErr(err)
-	handleErr(sscc.Seek(n))
+	handleErr(s.ctrl.Goto(n))
 }
 
 // Stop playing current track.
 func (s *impl) Stop(ctx *cli.Context) {
-	handleErr(sscc.Stop())
+	handleErr(s.ctrl.Stop())
 }
 
 // Play/Pause current track.
 func (s *impl) Toggle(ctx *cli.Context) {
-	handleErr(sscc.PlayPause())
+	handleErr(s.ctrl.Toggle())
 }
 
 // interactive runs in limited interactive mode if configured.
-func interactive(ctx *cli.Context) {
+func (s *impl) interactive(ctx *cli.Context) {
 	if ctx.Bool("i") {
 		fmt.Print("Play: ")
 		r := bufio.NewReader(os.Stdin)
 		uri, _, err := r.ReadLine()
 		handleErr(err)
-		handleErr(sscc.OpenURI(string(uri)))
+		handleErr(s.ctrl.Open(sscc.URI(uri)))
 	}
 }
 
 // Search for artist.
 func (s *impl) Artist(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
-	r, err := sscc.SearchArtist(ctx.Args().First())
-	handleErr(err)
-	disp(r)
-	interactive(ctx)
+	res, err := make(chan []sscc.Artist), make(chan error)
+	s.ctrl.SearchArtist(ctx.Args().First(), res, err)
+LOOP:
+	for {
+		select {
+		case res := <-res:
+			disp(res)
+		case err := <-err:
+			handleErr(err)
+			break LOOP
+		}
+	}
+	s.interactive(ctx)
 }
 
 // Search for album.
 func (s *impl) Album(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
-	r, err := sscc.SearchAlbum(ctx.Args().First())
-	handleErr(err)
-	disp(r)
-	interactive(ctx)
+	res, err := make(chan []sscc.Album), make(chan error, 1)
+	s.ctrl.SearchAlbum(ctx.Args().First(), res, err)
+LOOP:
+	for {
+		select {
+		case res := <-res:
+			disp(res)
+		case err := <-err:
+			handleErr(err)
+			break LOOP
+		}
+	}
+	s.interactive(ctx)
 }
 
 // Search for track.
 func (s *impl) Track(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
-	r, err := sscc.SearchTrack(ctx.Args().First())
-	handleErr(err)
-	disp(r)
-	interactive(ctx)
+	res, err := make(chan []sscc.Track), make(chan error)
+	s.ctrl.SearchTrack(ctx.Args().First(), res, err)
+LOOP:
+	for {
+		select {
+		case res := <-res:
+			disp(res)
+		case err := <-err:
+			handleErr(err)
+			break LOOP
+		}
+	}
+	s.interactive(ctx)
 }
 
 func validateSingle(args cli.Args) error {

@@ -1,0 +1,111 @@
+{
+  "artists" : {
+    "href" : "https://api.spotify.com/v1/search?query=Tenacious&offset=0&limit=5&type=artist",
+    "items" : [ {
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/artist/1XpDYCrUJnvCo9Ez6yeMWh"
+      },
+      "genres" : [ ],
+      "href" : "https://api.spotify.com/v1/artists/1XpDYCrUJnvCo9Ez6yeMWh",
+      "id" : "1XpDYCrUJnvCo9Ez6yeMWh",
+      "images" : [ {
+        "height" : 1335,
+        "url" : "https://i.scdn.co/image/0844a31bbae5b8880325056593622b234ae0bfc2",
+        "width" : 1000
+      }, {
+        "height" : 854,
+        "url" : "https://i.scdn.co/image/df904a4ba4d85831fe583a078e745bb1022c9c01",
+        "width" : 640
+      }, {
+        "height" : 267,
+        "url" : "https://i.scdn.co/image/19c87613e56bb2c927f07b87772b9b5b4b080cbf",
+        "width" : 200
+      }, {
+        "height" : 85,
+        "url" : "https://i.scdn.co/image/b930d63f52bfa140395d6717cad1f97355dcb7f4",
+        "width" : 64
+      } ],
+      "name" : "Tenacious D",
+      "popularity" : 49,
+      "type" : "artist",
+      "uri" : "spotify:artist:1XpDYCrUJnvCo9Ez6yeMWh"
+    }, {
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/artist/5sgprVkYi5OjM4nxKI8ZWg"
+      },
+      "genres" : [ ],
+      "href" : "https://api.spotify.com/v1/artists/5sgprVkYi5OjM4nxKI8ZWg",
+      "id" : "5sgprVkYi5OjM4nxKI8ZWg",
+      "images" : [ {
+        "height" : 640,
+        "url" : "https://i.scdn.co/image/94a4081eb4c7940f4f8d7419bf22f7605444fb98",
+        "width" : 640
+      }, {
+        "height" : 300,
+        "url" : "https://i.scdn.co/image/dbf75d10278aa82c185bbdbda6e365e9416f010b",
+        "width" : 300
+      }, {
+        "height" : 64,
+        "url" : "https://i.scdn.co/image/c3276f5a137f6c3d75ef0875bc3c7ce8f747bbf2",
+        "width" : 64
+      } ],
+      "name" : "Tenacious",
+      "popularity" : 0,
+      "type" : "artist",
+      "uri" : "spotify:artist:5sgprVkYi5OjM4nxKI8ZWg"
+    }, {
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/artist/2Sf0QliiNtuNTJe51TgalE"
+      },
+      "genres" : [ ],
+      "href" : "https://api.spotify.com/v1/artists/2Sf0QliiNtuNTJe51TgalE",
+      "id" : "2Sf0QliiNtuNTJe51TgalE",
+      "images" : [ ],
+      "name" : "Young Tenacious",
+      "popularity" : 0,
+      "type" : "artist",
+      "uri" : "spotify:artist:2Sf0QliiNtuNTJe51TgalE"
+    }, {
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/artist/6snWJ93BNH3JIbLGWczD1D"
+      },
+      "genres" : [ ],
+      "href" : "https://api.spotify.com/v1/artists/6snWJ93BNH3JIbLGWczD1D",
+      "id" : "6snWJ93BNH3JIbLGWczD1D",
+      "images" : [ ],
+      "name" : "BO, TENACIOUS BREED",
+      "popularity" : 0,
+      "type" : "artist",
+      "uri" : "spotify:artist:6snWJ93BNH3JIbLGWczD1D"
+    }, {
+      "external_urls" : {
+        "spotify" : "https://open.spotify.com/artist/7mtIirvrKV5SUE90cPeUnR"
+      },
+      "genres" : [ ],
+      "href" : "https://api.spotify.com/v1/artists/7mtIirvrKV5SUE90cPeUnR",
+      "id" : "7mtIirvrKV5SUE90cPeUnR",
+      "images" : [ {
+        "height" : 640,
+        "url" : "https://i.scdn.co/image/3101137d74b460e599cb9e65cc4ead749bec4ae1",
+        "width" : 640
+      }, {
+        "height" : 300,
+        "url" : "https://i.scdn.co/image/49aae30ea33ed6c68b33fc88cf881301428e30f3",
+        "width" : 300
+      }, {
+        "height" : 64,
+        "url" : "https://i.scdn.co/image/96c70f4e13d879a04ce79a57290264b08d9bdc64",
+        "width" : 64
+      } ],
+      "name" : "Tenacious Da Terrist",
+      "popularity" : 0,
+      "type" : "artist",
+      "uri" : "spotify:artist:7mtIirvrKV5SUE90cPeUnR"
+    } ],
+    "limit" : 5,
+    "next" : "https://api.spotify.com/v1/search?query=Tenacious&offset=5&limit=5&type=artist",
+    "offset" : 0,
+    "previous" : null,
+    "total" : 6
+  }
+}
