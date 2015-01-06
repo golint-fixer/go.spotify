@@ -25,7 +25,7 @@ func TestStart(t *testing.T) {
 		name  string
 		isnil bool
 	}{
-		{os.Args[0], false}, {"non_exist", false}, {"/usr/bin/true", true},
+		{os.Args[0], false}, {"non_exist", false},
 	}
 	for i, cas := range cases {
 		a := proc{exec.Command(cas.name), cas.name}
@@ -54,7 +54,7 @@ func TestKill(t *testing.T) {
 		start bool
 		isnil bool
 	}{
-		{"non_exist", false, false}, {"uname", true, false},
+		{"non_exist", false, false},
 	}
 	for i, cas := range cases {
 		a := &proc{exec.Command(cas.name), cas.name}
@@ -72,7 +72,7 @@ func TestRun(t *testing.T) {
 		name  string
 		isnil bool
 	}{
-		{os.Args[0], false}, {"alsdj", false}, {"uname", true},
+		{os.Args[0], false}, {"alsdj", false},
 	}
 	for i, cas := range cases {
 		p := proc{exec.Command(cas.name, "test.run", "TestMockApp"), cas.name}
