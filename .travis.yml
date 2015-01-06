@@ -13,7 +13,6 @@ env:
 install:
 - mkdir ${HOME}/bin
 - go get code.google.com/p/go.tools/cmd/vet
-- go get github.com/tools/godep
 - go get github.com/golang/lint/golint
 - go get code.google.com/p/go.tools/cmd/cover
 - go get github.com/mattn/goveralls
@@ -23,6 +22,7 @@ script:
 - golint .
 - go vet ./...
 - go get -t ./...
+- go test -v -race ./...
 - go list -f '{{if len .TestGoFiles}}"go test -coverprofile={{.Dir}}/.coverprofile {{.ImportPath}}"{{end}}' ./... | xargs -i sh -c {}
 - gover
 - goveralls -coverprofile=gover.coverprofile -service=travis-ci -repotoken=$COVERALLS_TOKEN
