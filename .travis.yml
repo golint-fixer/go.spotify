@@ -1,8 +1,7 @@
 language: go
 
 go:
-- release
-- tip
+- 1.4
 
 env:
   global:
@@ -14,7 +13,7 @@ install:
 - mkdir ${HOME}/bin
 - go get golang.org/x/tools/cmd/vet
 - go get github.com/golang/lint/golint
-- go get code.google.com/p/go.tools/cmd/cover
+- go get golang.org/x/tools/cmd/cover
 - go get github.com/mattn/goveralls
 - go get github.com/modocache/gover
 
