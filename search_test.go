@@ -2,6 +2,7 @@ package sscc
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/pblaszczyk/gophtu/asserts"
@@ -108,4 +109,22 @@ func TestSearch_Track(t *testing.T) {
 		i++
 	}
 	expectErr(t, err, i)
+}
+
+func TestSearch_Artist_Error(t *testing.T) {
+	t.Parallel()
+	w := web{
+		g: &getMock{
+			d: []string{
+				jsonData(t, "error_1.json"),
+			},
+		},
+	}
+	ch, err := make(chan []Artist), make(chan error, 1)
+	w.SearchArtist("", ch, err)
+	select {
+	case err := <-err:
+		asserts.Assert(t, err != nil, err, nil)
+		asserts.Check(t, strings.Contains(err.Error(), "code"), err, "code")
+	}
 }

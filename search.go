@@ -145,6 +145,12 @@ func (w web) read(s, val string, off, lim uint, resp interface{}) error {
 		if body, err = ioutil.ReadAll(r.Body); err != nil {
 			return err
 		}
+		{
+			var e webError
+			if err = json.Unmarshal(body, &e); err == nil && e.Err.Status != 0 {
+				return e
+			}
+		}
 		if err = json.Unmarshal(body, &resp); err != nil {
 			return err
 		}

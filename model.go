@@ -1,5 +1,7 @@
 package sscc
 
+import "fmt"
+
 // URI is a type representing Spotify URI.
 type URI string
 
@@ -82,3 +84,16 @@ type (
 		} `json:"tracks"`
 	}
 )
+
+type webError struct {
+	Err struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	} `json:"error"`
+}
+
+// String implements `error`.
+func (e webError) Error() string {
+	return fmt.Sprintf("sscc: get failed: code: %d, message: %q",
+		e.Err.Status, e.Err.Message)
+}
