@@ -18,10 +18,7 @@ type impl struct {
 
 // NewApp returns initialized instance of ssc struct.
 func NewApp() (app *impl) {
-	ctrl, err := sscc.NewControl()
-	if err != nil {
-		panic(err)
-	}
+	ctrl := sscc.NewControl(&sscc.Context{})
 	app = &impl{cli.NewApp(), ctrl}
 	app.App.Name = "sscc"
 	app.App.Version = "0.0.1"

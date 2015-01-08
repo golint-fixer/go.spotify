@@ -22,17 +22,21 @@ func TestIsEOF(t *testing.T) {
 
 func TestSearch_Artist(t *testing.T) {
 	t.Parallel()
-	w := web{
-		g: &getMock{
-			d: []string{
-				jsonData(t, "artist_1.json"),
-				jsonData(t, "artist_2.json"),
+	ctrl := NewControl(&Context{
+		nil,
+		nil,
+		web{
+			g: &getMock{
+				d: []string{
+					jsonData(t, "artist_1.json"),
+					jsonData(t, "artist_2.json"),
+				},
 			},
+			rl: 5,
 		},
-		rl: 5,
-	}
+	})
 	ch, err := make(chan []Artist), make(chan error, 1)
-	w.SearchArtist("", ch, err)
+	ctrl.SearchArtist("", ch, err)
 	i := 0
 	for c := range ch {
 		length := len(searchArtistFixt.res)
@@ -57,23 +61,27 @@ func expectErr(t *testing.T, err chan error, i int) {
 
 func TestSearch_Album(t *testing.T) {
 	t.Parallel()
-	w := web{
-		&getMock{
-			d: []string{
-				jsonData(t, "album_1.json"),
-				jsonData(t, "album_1_artist_1.json"),
-				jsonData(t, "album_1_artist_2.json"),
-				jsonData(t, "album_1_artist_1.json"),
-				jsonData(t, "album_1_artist_2.json"),
-				jsonData(t, "album_1_artist_1.json"),
-				jsonData(t, "album_2.json"),
-				jsonData(t, "album_1_artist_2.json"),
+	ctrl := NewControl(&Context{
+		nil,
+		nil,
+		web{
+			&getMock{
+				d: []string{
+					jsonData(t, "album_1.json"),
+					jsonData(t, "album_1_artist_1.json"),
+					jsonData(t, "album_1_artist_2.json"),
+					jsonData(t, "album_1_artist_1.json"),
+					jsonData(t, "album_1_artist_2.json"),
+					jsonData(t, "album_1_artist_1.json"),
+					jsonData(t, "album_2.json"),
+					jsonData(t, "album_1_artist_2.json"),
+				},
 			},
+			5,
 		},
-		5,
-	}
+	})
 	ch, err := make(chan []Album), make(chan error, 1)
-	w.SearchAlbum("", ch, err)
+	ctrl.SearchAlbum("", ch, err)
 	i := 0
 	for c := range ch {
 		length := len(searchAlbumFixt.res)
@@ -89,17 +97,21 @@ func TestSearch_Album(t *testing.T) {
 
 func TestSearch_Track(t *testing.T) {
 	t.Parallel()
-	w := web{
-		&getMock{
-			d: []string{
-				jsonData(t, "track_1.json"),
-				jsonData(t, "track_2.json"),
+	ctrl := NewControl(&Context{
+		nil,
+		nil,
+		web{
+			&getMock{
+				d: []string{
+					jsonData(t, "track_1.json"),
+					jsonData(t, "track_2.json"),
+				},
 			},
+			2,
 		},
-		2,
-	}
+	})
 	ch, err := make(chan []Track), make(chan error, 1)
-	w.SearchTrack("", ch, err)
+	ctrl.SearchTrack("", ch, err)
 	i := 0
 	for c := range ch {
 		length := len(searchTrackFixt.res)
@@ -113,15 +125,19 @@ func TestSearch_Track(t *testing.T) {
 
 func TestSearch_Artist_Error(t *testing.T) {
 	t.Parallel()
-	w := web{
-		g: &getMock{
-			d: []string{
-				jsonData(t, "error_1.json"),
+	ctrl := NewControl(&Context{
+		nil,
+		nil,
+		web{
+			g: &getMock{
+				d: []string{
+					jsonData(t, "error_1.json"),
+				},
 			},
 		},
-	}
+	})
 	ch, err := make(chan []Artist), make(chan error, 1)
-	w.SearchArtist("", ch, err)
+	ctrl.SearchArtist("", ch, err)
 	select {
 	case err := <-err:
 		asserts.Assert(t, err != nil, err, nil)

@@ -112,6 +112,7 @@ func pid(name string) (int32, error) {
 	return pid, nil
 }
 
+// min is a helper func returning minimal of 2 values.
 func min(x int32, y int64) int32 {
 	if x < int32(y) {
 		return x

@@ -77,6 +77,12 @@ func newDbus() *dbus {
 
 var defaultDbus = newDbus()
 
+func init() {
+	if err := defaultDbus.init(); err != nil {
+		panic(err)
+	}
+}
+
 type dbusInit func() (*dbs.Object, error)
 
 func initDbus() (*dbs.Object, error) {

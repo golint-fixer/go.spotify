@@ -71,14 +71,17 @@ func senderr(err error, c chan<- error) {
 	}
 }
 
+// SearchArtist implements `Searcher`.
 func (w web) SearchArtist(name string, c chan<- []Artist, err chan<- error) {
 	go w.s("artist", name, c, &artistResp{}, err, nil)
 }
 
+// SearchAlbum implements `Searcher`.
 func (w web) SearchAlbum(name string, c chan<- []Album, err chan<- error) {
 	go w.s("album", name, c, &albumResp{}, err, web.lookupAlbums)
 }
 
+// SearchTrack implements `Searcher`.
 func (w web) SearchTrack(name string, c chan<- []Track, err chan<- error) {
 	go w.s("track", name, c, &trackResp{}, err, nil)
 }
