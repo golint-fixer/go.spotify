@@ -1,6 +1,9 @@
 package sscc
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // URI is a type representing Spotify URI.
 type URI string
@@ -25,6 +28,14 @@ type Track struct {
 	AlbumURI  string   // AlbumURI is a URI of album containing track.
 	AlbumName string   // AlbumName is the name of album containing track.
 	Artists   []Artist // Artists is a list of artists of the track.
+}
+
+// String implements `Stringer`.
+func (t Track) String() string {
+	track := strings.Trim(t.Name, "\\\"")
+	album := strings.Trim(t.AlbumName, "\\\"")
+	artist := strings.Trim(t.Artists[0].Name, "\\\"")
+	return fmt.Sprintf("Title: %s\nAlbum: %s\nArtist: %s", track, album, artist)
 }
 
 type respHeader struct {

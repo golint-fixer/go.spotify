@@ -34,6 +34,7 @@ func NewApp() (app *impl) {
 		{Name: "play", Usage: "Play current track/uri/pos.", Action: app.Play},
 		{Name: "stop", Usage: "Stop.", Action: app.Stop},
 		{Name: "toggle", Usage: "Play/Pause.", Action: app.Toggle},
+		{Name: "track", Usage: "Current Track.", Action: app.CurTrack},
 		{Name: "search", Usage: "Search for artist/album/track.",
 			Subcommands: []cli.Command{
 				{Name: "artist", Usage: "Search for artist.", Action: app.Artist,
@@ -116,6 +117,13 @@ func (s *impl) Stop(ctx *cli.Context) {
 // Play/Pause current track.
 func (s *impl) Toggle(ctx *cli.Context) {
 	handleErr(s.ctrl.Toggle())
+}
+
+// CurTrack displays info about current track.
+func (s *impl) CurTrack(ctx *cli.Context) {
+	track, err := s.ctrl.CurTrack()
+	handleErr(err)
+	fmt.Println(track)
 }
 
 // interactive runs in limited interactive mode if configured.

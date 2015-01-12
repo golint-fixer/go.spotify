@@ -52,18 +52,18 @@ const (
 // Dbuser is an interface for operations on Spotify desktop application's dbus
 // interface.
 type Dbuser interface {
-	Open(URI) error          // Open starts playing track with provided URI.
-	Play() error             // Play plays currently set track.
-	Stop() error             // Stop stops playing current track.
-	Pause() error            // Pause pauses currently played track.
-	Toggle() error           // Toggle toggles between play & pause state.
-	Next() error             // Next plays next track.
-	Prev() error             // Prev plays previous track.
-	Goto(int64) error        // Goto seeks for offset µs.
-	SetPos(URI, int64) error // SetPos goes to specified position for track.
-	Raise() error            // Raise raises Spotify app.
-	Quit() error             // Quit quits Spotify app.
-	Track() (Track, error)   // Track returns currently played track.
+	Open(URI) error           // Open starts playing track with provided URI.
+	Play() error              // Play plays currently set track.
+	Stop() error              // Stop stops playing current track.
+	Pause() error             // Pause pauses currently played track.
+	Toggle() error            // Toggle toggles between play & pause state.
+	Next() error              // Next plays next track.
+	Prev() error              // Prev plays previous track.
+	Goto(int64) error         // Goto seeks for offset µs.
+	SetPos(URI, int64) error  // SetPos goes to specified position for track.
+	Raise() error             // Raise raises Spotify app.
+	Quit() error              // Quit quits Spotify app.
+	CurTrack() (Track, error) // Track returns currently played track.
 }
 
 type dbus struct {
@@ -133,25 +133,16 @@ func (d *dbus) Play() error {
 
 // Goto implements `Dbuser`.
 func (d *dbus) Goto(offset int64) error {
-	if err := d.init(); err != nil {
-		return err
-	}
 	return d.o.Call(methodSeek, 0, offset).Err
 }
 
 // SetPos implements `Dbuser`.
 func (d *dbus) SetPos(trackID URI, pos int64) error {
-	if err := d.init(); err != nil {
-		return err
-	}
 	return d.o.Call(methodSetPos, 0, dbs.ObjectPath(string(trackID)), pos).Err
 }
 
 // Open implements `Dbuser`.
 func (d *dbus) Open(uri URI) error {
-	if err := d.init(); err != nil {
-		return err
-	}
 	return d.o.Call(methodOpenURI, 0, string(uri)).Err
 }
 
@@ -165,14 +156,24 @@ func (d *dbus) Raise() error {
 	return d.noArgsMethod(methodRaise)
 }
 
-// Track implements `Dbuser`.
-func (d *dbus) Track() (Track, error) {
-	panic("sscc: not implemented")
+// CurTrack implements `Dbuser`.
+func (d *dbus) CurTrack() (Track, error) {
+	v, err := d.o.GetProperty(propMetadata)
+	if err != nil {
+		return Track{}, err
+	}
+	m := v.Value().(map[string]dbs.Variant)
+	return Track{
+		Name:      m["xesam:title"].Value().(string),
+		AlbumName: m["xesam:album"].Value().(string),
+		Artists: []Artist{
+			{
+				Name: (m["xesam:artist"].Value().([]string))[0],
+			},
+		},
+	}, nil
 }
 
 func (d *dbus) noArgsMethod(method string) error {
-	if err := d.init(); err != nil {
-		return err
-	}
 	return d.o.Call(method, 0).Err
 }
