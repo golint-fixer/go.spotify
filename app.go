@@ -10,19 +10,18 @@ import (
 	"strings"
 )
 
-// procName is a name of Spotify desktop application process.
-const procName = "spotify"
+// execName is the name of Spotify process.
+const execName = "spotify"
 
-// Procer is an interface for operations on Spotify desktop application.
-type Procer interface {
-	Run() error    // Run starts the app.
-	Kill() error   // Kill stops the app.
-	Attach() error // Attach connects to an already running app.
-	Ping() error   // Ping checks if the app is currently running.
+// Execer represents Spotify process.
+type Execer interface {
+	Run() error    // Run starts Spotify.
+	Kill() error   // Kill stops Spotify.
+	Attach() error // Attach connects to an already running Spotify.
+	Ping() error   // Ping checks if Spotify is already running.
 }
 
-// errIsRunning is returned if Spotify desktop application is already running
-// when it's expected to be down.
+// errIsRunning is returned if Spotify is already running.
 var errIsRunning = errors.New("sscc: spotify is already running")
 
 // IsRunning returns a boolean indicating whether the error is known to report
@@ -31,7 +30,7 @@ func IsRunning(err error) bool {
 	return err == errIsRunning
 }
 
-// Run implements `Procer`.
+// Run implements `Execer`.
 func (p *proc) Run() error {
 	if err := p.Ping(); err == nil {
 		return errIsRunning
@@ -39,7 +38,7 @@ func (p *proc) Run() error {
 	return p.start()
 }
 
-// Kill implements `Procer`.
+// Kill implements `Execer`.
 func (p *proc) Kill() error {
 	if err := p.Attach(); err != nil {
 		return err
@@ -47,7 +46,7 @@ func (p *proc) Kill() error {
 	return p.kill()
 }
 
-// Attach implements `Procer`.
+// Attach implements `Execer`.
 func (p *proc) Attach() error {
 	pid, err := pid(p.name)
 	if err != nil {
@@ -57,12 +56,13 @@ func (p *proc) Attach() error {
 	return nil
 }
 
-// Ping implements `Procer`.
+// Ping implements `Execer`.
 func (p *proc) Ping() (err error) {
 	_, err = pid(p.name)
 	return
 }
 
+// start starts process.
 func (p *proc) start() error {
 	if err := p.cmd.Start(); err != nil {
 		return fmt.Errorf("sscc: failed to start: %q", err)
@@ -70,6 +70,7 @@ func (p *proc) start() error {
 	return nil
 }
 
+// kill kills process.
 func (p *proc) kill() error {
 	if err := p.cmd.Process.Kill(); err != nil {
 		return fmt.Errorf("sscc: failed to kill: %q", err)
@@ -77,18 +78,18 @@ func (p *proc) kill() error {
 	return nil
 }
 
+// proc is a default implementation of `Execer`.
 type proc struct {
-	cmd  *exec.Cmd
-	name string
+	cmd  *exec.Cmd // cmd is used to control process.
+	name string    // name is the name of executable.
 }
 
-func newProc() *proc {
-	return &proc{exec.Command(procName), procName}
+// newExecer returns default implementation of `Execer`.
+func newExecer() Execer {
+	return &proc{exec.Command(execName), execName}
 }
 
-var defaultProc = newProc()
-
-// pid returns PID of running Spotify desktop application.
+// pid returns PID of running Spotify.
 func pid(name string) (int32, error) {
 	out, err := exec.Command("pidof", name).Output()
 	if err != nil {
@@ -102,6 +103,7 @@ func pid(name string) (int32, error) {
 	if len(l) < 1 {
 		return 0, fmt.Errorf("sscc: failed to parse PID data: %q", string(out))
 	}
+	// Returned PID is chosen based on assumption that the lowest PID is the one.
 	pid, p := int32(math.MaxInt32), int64(0)
 	for _, v := range l {
 		if p, err = strconv.ParseInt(v, 10, 32); err != nil {

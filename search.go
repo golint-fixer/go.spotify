@@ -14,9 +14,6 @@ import (
 	"time"
 )
 
-// errUnsupported is an error returned if search kind is not supported.
-var errUnsupported = errors.New("sscc: unsupported type of Search result")
-
 // errEOF is returned when there is no more data to be returned.
 var errEOF = errors.New("sscc: end of response")
 
@@ -25,15 +22,6 @@ var errEOF = errors.New("sscc: end of response")
 func IsEOF(err error) bool {
 	return err == errEOF
 }
-
-// IsNotSupported returns a boolean indicating if err is known to be returned
-// when there search type is not supported.
-func IsNotSupported(err error) bool {
-	return err == errUnsupported
-}
-
-// defaultSearch is a default implementaiton of `Searcher`.
-var defaultSearch = newWeb()
 
 // Searcher is an interface for searching for requested artists/albums/tracks.
 type Searcher interface {
@@ -54,7 +42,6 @@ func sendRes(res interface{}, v interface{}) {
 
 type cstm func(web, interface{}) error
 
-// respParam is a type o
 type respParam struct {
 	t string
 	r interface{}
@@ -64,12 +51,6 @@ type respParam struct {
 const (
 	timeout = 30 * time.Second // timeout for http call.
 )
-
-func senderr(err error, c chan<- error) {
-	if c != nil {
-		c <- err
-	}
-}
 
 // SearchArtist implements `Searcher`.
 func (w web) SearchArtist(name string, c chan<- []Artist, err chan<- error) {
@@ -206,7 +187,7 @@ type web struct {
 	rl uint
 }
 
-func newWeb() *web {
+func newSearcher() *web {
 	return &web{newGet(), 50}
 }
 

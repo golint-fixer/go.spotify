@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-	"strconv"
+	"time"
 
 	"github.com/codegangsta/cli"
 	"github.com/pblaszczyk/sscc"
@@ -30,11 +30,19 @@ func NewApp() (app *impl) {
 		{Name: "next", Usage: "Play next track.", Action: app.Next},
 		{Name: "prev", Usage: "Play prev track.", Action: app.Prev},
 		{Name: "open", Usage: "Play music identified by uri.", Action: app.Open},
-		{Name: "seek", Usage: "Seek.", Action: app.Seek},
+		{Name: "seek", Usage: "Goto.", Action: app.Goto},
 		{Name: "play", Usage: "Play current track/uri/pos.", Action: app.Play},
 		{Name: "stop", Usage: "Stop.", Action: app.Stop},
 		{Name: "toggle", Usage: "Play/Pause.", Action: app.Toggle},
-		{Name: "track", Usage: "Current Track.", Action: app.CurTrack},
+		{Name: "status", Usage: "Status.", Action: app.Status},
+		{Name: "track", Usage: "Current track.", Action: app.CurTrack},
+		{Name: "setpos", Usage: "Sets position.", Action: app.SetPos},
+		{Name: "length", Usage: "Length of current track.", Action: app.Length},
+		{Name: "pos", Usage: "Current position.", Action: app.Pos},
+		{Name: "canplay", Usage: "Can play.", Action: app.CanPlay},
+		{Name: "cannext", Usage: "Can next.", Action: app.CanNext},
+		{Name: "canprev", Usage: "Can prev.", Action: app.CanPrev},
+		{Name: "canctrl", Usage: "Can control.", Action: app.CanControl},
 		{Name: "search", Usage: "Search for artist/album/track.",
 			Subcommands: []cli.Command{
 				{Name: "artist", Usage: "Search for artist.", Action: app.Artist,
@@ -101,12 +109,12 @@ func (s *impl) Play(ctx *cli.Context) {
 	handleErr(s.ctrl.Play())
 }
 
-// Seek pos.
-func (s *impl) Seek(ctx *cli.Context) {
+// Goto pos.
+func (s *impl) Goto(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
-	n, err := strconv.ParseInt(ctx.Args().First(), 10, 64)
+	d, err := time.ParseDuration(ctx.Args().First())
 	handleErr(err)
-	handleErr(s.ctrl.Goto(n))
+	handleErr(s.ctrl.Goto(d))
 }
 
 // Stop playing current track.
@@ -124,6 +132,49 @@ func (s *impl) CurTrack(ctx *cli.Context) {
 	track, err := s.ctrl.CurTrack()
 	handleErr(err)
 	fmt.Println(track)
+}
+
+func (s *impl) SetPos(ctx *cli.Context) {
+	handleErr(validateSingle(ctx.Args()))
+	d, err := time.ParseDuration(ctx.Args().First())
+	handleErr(err)
+	handleErr(s.ctrl.SetPos(d))
+}
+
+func (s *impl) Length(ctx *cli.Context) {
+	l, err := s.ctrl.Length()
+	handleErr(err)
+	fmt.Println(l)
+}
+
+func (s *impl) Pos(ctx *cli.Context) {
+	d, err := s.ctrl.Pos()
+	handleErr(err)
+	fmt.Println(d)
+}
+
+func (s *impl) CanPlay(ctx *cli.Context) {
+	b, err := s.ctrl.CanPlay()
+	handleErr(err)
+	fmt.Println(b)
+}
+
+func (s *impl) CanNext(ctx *cli.Context) {
+	b, err := s.ctrl.CanNext()
+	handleErr(err)
+	fmt.Println(b)
+}
+
+func (s *impl) CanPrev(ctx *cli.Context) {
+	b, err := s.ctrl.CanPrev()
+	handleErr(err)
+	fmt.Println(b)
+}
+
+func (s *impl) CanControl(ctx *cli.Context) {
+	b, err := s.ctrl.CanControl()
+	handleErr(err)
+	fmt.Println(b)
 }
 
 // interactive runs in limited interactive mode if configured.
@@ -152,6 +203,7 @@ LOOP:
 			break LOOP
 		}
 	}
+	fmt.Println("")
 	s.interactive(ctx)
 }
 
@@ -170,6 +222,7 @@ LOOP:
 			break LOOP
 		}
 	}
+	fmt.Println("")
 	s.interactive(ctx)
 }
 
@@ -191,6 +244,12 @@ LOOP:
 	s.interactive(ctx)
 }
 
+func (s *impl) Status(ctx *cli.Context) {
+	status, err := s.ctrl.Status()
+	handleErr(err)
+	fmt.Println(status)
+}
+
 func validateSingle(args cli.Args) error {
 	n := len(args)
 	if n == 0 {
@@ -204,21 +263,19 @@ func validateSingle(args cli.Args) error {
 
 func disp(r interface{}) {
 	for i := reflect.ValueOf(r).Len() - 1; i >= 0; i-- {
-		rec := false
-		for j := 0; j < reflect.ValueOf(r).Index(i).NumField(); j++ {
+		for j, l := 0, reflect.ValueOf(r).Index(i).NumField(); j < l; j++ {
 			f := reflect.ValueOf(r).Index(i).Field(j)
 			if f.Kind() == reflect.Slice {
-				rec = true
-				fmt.Printf("\n%q\n",
-					reflect.ValueOf(r).Index(i).Type().Field(j).Name)
+				fmt.Printf("%q\n", reflect.ValueOf(r).Index(i).Type().Field(j).Name)
 				disp(f.Interface())
 			} else {
-				fmt.Printf("%q: %q ",
+				fmt.Printf("%q: %q",
 					reflect.ValueOf(r).Index(i).Type().Field(j).Name, f.String())
 			}
+			if j < l-1 {
+				fmt.Println("")
+			}
 		}
-		if !rec {
-			fmt.Printf("\n\n\n")
-		}
+		fmt.Println("")
 	}
 }

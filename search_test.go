@@ -1,6 +1,7 @@
 package sscc
 
 import (
+	"errors"
 	"reflect"
 	"strings"
 	"testing"
@@ -14,7 +15,7 @@ func TestIsEOF(t *testing.T) {
 		e error
 		r bool
 	}{
-		{errEOF, true}, {errUnsupported, false}, {nil, false},
+		{errEOF, true}, {errors.New(""), false}, {nil, false},
 	} {
 		asserts.Check(t, IsEOF(c.e) == c.r, IsEOF(c.e), c.r)
 	}

@@ -32,10 +32,10 @@ type Track struct {
 
 // String implements `Stringer`.
 func (t Track) String() string {
-	track := strings.Trim(t.Name, "\\\"")
-	album := strings.Trim(t.AlbumName, "\\\"")
-	artist := strings.Trim(t.Artists[0].Name, "\\\"")
-	return fmt.Sprintf("Title: %s\nAlbum: %s\nArtist: %s", track, album, artist)
+	trk := strings.Trim(t.Name, "\\\"")
+	alb := strings.Trim(t.AlbumName, "\\\"")
+	art := strings.Trim(t.Artists[0].Name, "\\\"")
+	return fmt.Sprintf("Title:  %s\nAlbum:  %s\nArtist: %s", trk, alb, art)
 }
 
 type respHeader struct {
@@ -107,4 +107,28 @@ type webError struct {
 func (e webError) Error() string {
 	return fmt.Sprintf("sscc: get failed: code: %d, message: %q",
 		e.Err.Status, e.Err.Message)
+}
+
+// Status represents status of Spotify.
+type Status string
+
+const (
+	// Playing state.
+	Playing Status = "Playing"
+
+	// Paused state.
+	Paused Status = "Paused"
+)
+
+// makeStatus is a helper function converting string to corresponding value
+// of `Status` type.
+func makeStatus(status string) (Status, error) {
+	switch status {
+	case string(Playing):
+		return Status(status), nil
+	case string(Paused):
+		return Status(status), nil
+	default:
+		return Status(""), fmt.Errorf("sscc: unsupported status: %s", status)
+	}
 }

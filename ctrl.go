@@ -1,15 +1,15 @@
 package sscc
 
-// Controller is an interface for providing access to pkg's functionalities.
+// Controller describes operations available through package.
 type Controller interface {
-	Procer
+	Execer
 	Dbuser
 	Searcher
 }
 
 // control is a default implementation of `Controller`.
 type control struct {
-	Procer
+	Execer
 	Dbuser
 	Searcher
 }
@@ -17,7 +17,7 @@ type control struct {
 // NewControl returns `Controller` implementation based on `Context`.
 func NewControl(ctx *Context) Controller {
 	return &control{
-		ctx.procer(),
+		ctx.execer(),
 		ctx.dbuser(),
 		ctx.searcher(),
 	}
@@ -25,28 +25,31 @@ func NewControl(ctx *Context) Controller {
 
 // Context is an initializing structure for `Controller` implementation.
 type Context struct {
-	Proc   Procer   // Proc is an implementation of `Procer`.
+	Exec   Execer   // Exec is an implementation of `Procer`.
 	Dbus   Dbuser   // Dbus is an implementation of `Dbuser`.
 	Search Searcher // Search is an implementation of `Searcher`.
 }
 
-func (ctx *Context) procer() Procer {
-	if ctx.Proc != nil {
-		return ctx.Proc
+// execer returns `Execer` implementation.
+func (ctx *Context) execer() Execer {
+	if ctx.Exec != nil {
+		return ctx.Exec
 	}
-	return defaultProc
+	return newExecer()
 }
 
+// dbuser returns `Dbuser` implementation.
 func (ctx *Context) dbuser() Dbuser {
 	if ctx.Dbus != nil {
 		return ctx.Dbus
 	}
-	return defaultDbus
+	return newDbuser()
 }
 
+// searcher returns `Searcher` implementation.
 func (ctx *Context) searcher() Searcher {
 	if ctx.Search != nil {
 		return ctx.Search
 	}
-	return defaultSearch
+	return newSearcher()
 }
