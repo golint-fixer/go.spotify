@@ -124,20 +124,12 @@ func (w web) read(s, val string, off, lim uint, resp interface{}) error {
 		return err
 	}
 	defer r.Body.Close()
-	{
-		var body []byte
-		if body, err = ioutil.ReadAll(r.Body); err != nil {
-			return err
-		}
-		{
-			var e webError
-			if err = json.Unmarshal(body, &e); err == nil && e.Err.Status != 0 {
-				return e
-			}
-		}
-		if err = json.Unmarshal(body, &resp); err != nil {
-			return err
-		}
+	var body []byte
+	if body, err = ioutil.ReadAll(r.Body); err != nil {
+		return err
+	}
+	if err = unmarshal(body, resp); err != nil {
+		return err
 	}
 	v := reflect.ValueOf(resp).Elem()
 	if v.Kind() == reflect.Invalid || v.NumField() != 1 {
@@ -149,6 +141,17 @@ func (w web) read(s, val string, off, lim uint, resp interface{}) error {
 	}
 	if v.Field(0).FieldByName(next).IsNil() {
 		return errEOF
+	}
+	return nil
+}
+
+func unmarshal(body []byte, resp interface{}) error {
+	var e webError
+	if err := json.Unmarshal(body, &e); err == nil && e.Err.Status != 0 {
+		return e
+	}
+	if err := json.Unmarshal(body, &resp); err != nil {
+		return err
 	}
 	return nil
 }

@@ -11,15 +11,16 @@ import (
 	"github.com/pblaszczyk/sscc"
 )
 
-type impl struct {
+// App is a structure controlling sscc executable.
+type App struct {
 	*cli.App
 	ctrl sscc.Controller
 }
 
 // NewApp returns initialized instance of ssc struct.
-func NewApp() (app *impl) {
+func NewApp() (app *App) {
 	ctrl := sscc.NewControl(&sscc.Context{})
-	app = &impl{cli.NewApp(), ctrl}
+	app = &App{cli.NewApp(), ctrl}
 	app.App.Name = "sscc"
 	app.App.Version = "0.0.1"
 	app.App.Usage = "commandline controller of Spotify desktop app."
@@ -74,125 +75,132 @@ var handleErr = func(err error) {
 }
 
 // Start starts spotify app.
-func (s *impl) Start(ctx *cli.Context) {
-	handleErr(s.ctrl.Run())
+func (a *App) Start(ctx *cli.Context) {
+	handleErr(a.ctrl.Run())
 }
 
 // Raise raises spotify app's window.
-func (s *impl) Raise(ctx *cli.Context) {
-	handleErr(s.ctrl.Raise())
+func (a *App) Raise(ctx *cli.Context) {
+	handleErr(a.ctrl.Raise())
 }
 
 // Kill stops spotify app.
-func (s *impl) Kill(ctx *cli.Context) {
-	handleErr(s.ctrl.Kill())
+func (a *App) Kill(ctx *cli.Context) {
+	handleErr(a.ctrl.Kill())
 }
 
 // Next starts playing next track.
-func (s *impl) Next(ctx *cli.Context) {
-	handleErr(s.ctrl.Next())
+func (a *App) Next(ctx *cli.Context) {
+	handleErr(a.ctrl.Next())
 }
 
 // Prev starts playing prev track.
-func (s *impl) Prev(ctx *cli.Context) {
-	handleErr(s.ctrl.Prev())
+func (a *App) Prev(ctx *cli.Context) {
+	handleErr(a.ctrl.Prev())
 }
 
 // Open starts playing specified uri.
-func (s *impl) Open(ctx *cli.Context) {
+func (a *App) Open(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
-	handleErr(s.ctrl.Open(sscc.URI(ctx.Args().First())))
+	handleErr(a.ctrl.Open(sscc.URI(ctx.Args().First())))
 }
 
-// Open starts playing.
-func (s *impl) Play(ctx *cli.Context) {
-	handleErr(s.ctrl.Play())
+// Play starts playing.
+func (a *App) Play(ctx *cli.Context) {
+	handleErr(a.ctrl.Play())
 }
 
 // Goto pos.
-func (s *impl) Goto(ctx *cli.Context) {
+func (a *App) Goto(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
 	d, err := time.ParseDuration(ctx.Args().First())
 	handleErr(err)
-	handleErr(s.ctrl.Goto(d))
+	handleErr(a.ctrl.Goto(d))
 }
 
 // Stop playing current track.
-func (s *impl) Stop(ctx *cli.Context) {
-	handleErr(s.ctrl.Stop())
+func (a *App) Stop(ctx *cli.Context) {
+	handleErr(a.ctrl.Stop())
 }
 
-// Play/Pause current track.
-func (s *impl) Toggle(ctx *cli.Context) {
-	handleErr(s.ctrl.Toggle())
+// Toggle plays/pauses current track.
+func (a *App) Toggle(ctx *cli.Context) {
+	handleErr(a.ctrl.Toggle())
 }
 
 // CurTrack displays info about current track.
-func (s *impl) CurTrack(ctx *cli.Context) {
-	track, err := s.ctrl.CurTrack()
+func (a *App) CurTrack(ctx *cli.Context) {
+	track, err := a.ctrl.CurTrack()
 	handleErr(err)
 	fmt.Println(track)
 }
 
-func (s *impl) SetPos(ctx *cli.Context) {
+// SetPos moves to requested pos.
+func (a *App) SetPos(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
 	d, err := time.ParseDuration(ctx.Args().First())
 	handleErr(err)
-	handleErr(s.ctrl.SetPos(d))
+	handleErr(a.ctrl.SetPos(d))
 }
 
-func (s *impl) Length(ctx *cli.Context) {
-	l, err := s.ctrl.Length()
+// Length display current track's length.
+func (a *App) Length(ctx *cli.Context) {
+	l, err := a.ctrl.Length()
 	handleErr(err)
 	fmt.Println(l)
 }
 
-func (s *impl) Pos(ctx *cli.Context) {
-	d, err := s.ctrl.Pos()
+// Pos returns current position.
+func (a *App) Pos(ctx *cli.Context) {
+	d, err := a.ctrl.Pos()
 	handleErr(err)
 	fmt.Println(d)
 }
 
-func (s *impl) CanPlay(ctx *cli.Context) {
-	b, err := s.ctrl.CanPlay()
+// CanPlay returns info if playing is possible.
+func (a *App) CanPlay(ctx *cli.Context) {
+	b, err := a.ctrl.CanPlay()
 	handleErr(err)
 	fmt.Println(b)
 }
 
-func (s *impl) CanNext(ctx *cli.Context) {
-	b, err := s.ctrl.CanNext()
+// CanNext returns info if going to next track is possible.
+func (a *App) CanNext(ctx *cli.Context) {
+	b, err := a.ctrl.CanNext()
 	handleErr(err)
 	fmt.Println(b)
 }
 
-func (s *impl) CanPrev(ctx *cli.Context) {
-	b, err := s.ctrl.CanPrev()
+// CanPrev returns info if going to prev track is possible.
+func (a *App) CanPrev(ctx *cli.Context) {
+	b, err := a.ctrl.CanPrev()
 	handleErr(err)
 	fmt.Println(b)
 }
 
-func (s *impl) CanControl(ctx *cli.Context) {
-	b, err := s.ctrl.CanControl()
+// CanControl returns info if controlling is possible.
+func (a *App) CanControl(ctx *cli.Context) {
+	b, err := a.ctrl.CanControl()
 	handleErr(err)
 	fmt.Println(b)
 }
 
 // interactive runs in limited interactive mode if configured.
-func (s *impl) interactive(ctx *cli.Context) {
+func (a *App) interactive(ctx *cli.Context) {
 	if ctx.Bool("i") {
 		fmt.Print("Play: ")
 		r := bufio.NewReader(os.Stdin)
 		uri, _, err := r.ReadLine()
 		handleErr(err)
-		handleErr(s.ctrl.Open(sscc.URI(uri)))
+		handleErr(a.ctrl.Open(sscc.URI(uri)))
 	}
 }
 
-// Search for artist.
-func (s *impl) Artist(ctx *cli.Context) {
+// Artist searches for artist.
+func (a *App) Artist(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
 	res, err := make(chan []sscc.Artist), make(chan error)
-	s.ctrl.SearchArtist(ctx.Args().First(), res, err)
+	a.ctrl.SearchArtist(ctx.Args().First(), res, err)
 LOOP:
 	for {
 		select {
@@ -204,14 +212,14 @@ LOOP:
 		}
 	}
 	fmt.Println("")
-	s.interactive(ctx)
+	a.interactive(ctx)
 }
 
-// Search for album.
-func (s *impl) Album(ctx *cli.Context) {
+// Album searches for album.
+func (a *App) Album(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
 	res, err := make(chan []sscc.Album), make(chan error, 1)
-	s.ctrl.SearchAlbum(ctx.Args().First(), res, err)
+	a.ctrl.SearchAlbum(ctx.Args().First(), res, err)
 LOOP:
 	for {
 		select {
@@ -223,14 +231,14 @@ LOOP:
 		}
 	}
 	fmt.Println("")
-	s.interactive(ctx)
+	a.interactive(ctx)
 }
 
-// Search for track.
-func (s *impl) Track(ctx *cli.Context) {
+// Track searches for track.
+func (a *App) Track(ctx *cli.Context) {
 	handleErr(validateSingle(ctx.Args()))
 	res, err := make(chan []sscc.Track), make(chan error)
-	s.ctrl.SearchTrack(ctx.Args().First(), res, err)
+	a.ctrl.SearchTrack(ctx.Args().First(), res, err)
 LOOP:
 	for {
 		select {
@@ -241,11 +249,12 @@ LOOP:
 			break LOOP
 		}
 	}
-	s.interactive(ctx)
+	a.interactive(ctx)
 }
 
-func (s *impl) Status(ctx *cli.Context) {
-	status, err := s.ctrl.Status()
+// Status returns current status.
+func (a *App) Status(ctx *cli.Context) {
+	status, err := a.ctrl.Status()
 	handleErr(err)
 	fmt.Println(status)
 }

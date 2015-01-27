@@ -18,14 +18,14 @@ var searchArtistFixt = struct {
 	res [][]Artist
 	err error
 }{
-	[][]Artist{[]Artist{
+	[][]Artist{{
 		{"spotify:artist:1XpDYCrUJnvCo9Ez6yeMWh", "Tenacious D"},
 		{"spotify:artist:5sgprVkYi5OjM4nxKI8ZWg", "Tenacious"},
 		{"spotify:artist:2Sf0QliiNtuNTJe51TgalE", "Young Tenacious"},
 		{"spotify:artist:6snWJ93BNH3JIbLGWczD1D", "BO, TENACIOUS BREED"},
 		{"spotify:artist:7mtIirvrKV5SUE90cPeUnR", "Tenacious Da Terrist"},
 	},
-		[]Artist{
+		{
 			{"spotify:artist:4FUej2oub0ZMSAfSpVpc4H", "M.T.T.S. (Ty Bru, Medic, Tenacious)"},
 		},
 		[]Artist(nil),
@@ -37,7 +37,7 @@ var searchAlbumFixt = struct {
 	err error
 }{
 	[][]Album{
-		[]Album{{
+		{{
 			"spotify:album:4LJbsUCNTcNNNHNiX6qES1", "POD",
 			[]Artist{
 				{"spotify:artist:1XpDYCrUJnvCo9Ez6yeMWh", "Tenacious D"},
@@ -68,7 +68,7 @@ var searchAlbumFixt = struct {
 				},
 			},
 		},
-		[]Album{
+		{
 			{
 				"spotify:album:4LJbsUCNTcNNNHNiX6qES1", "POD",
 				[]Artist{
@@ -85,7 +85,7 @@ var searchTrackFixt = struct {
 	err error
 }{
 	[][]Track{
-		[]Track{
+		{
 			{
 				"spotify:track:6crBy2sODw2HS53xquM6us", "Tribute",
 				"spotify:album:1AckkxSo39144vOBrJ1GkS", "Tenacious D",
@@ -101,7 +101,7 @@ var searchTrackFixt = struct {
 				},
 			},
 		},
-		[]Track{
+		{
 			{"spotify:track:7jxSwduTONaRn00SQQbInK", "White and Nerdy (Karaoke Version)",
 				"spotify:album:4zb12kro15pJa2YG1uEcmR", "Drew's Famous #1 Karaoke Hits: Sing Like Tenacious D, Flight of the Conchords, & Friends",
 				[]Artist{
