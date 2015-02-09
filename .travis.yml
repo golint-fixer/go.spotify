@@ -5,9 +5,9 @@ env:
   global:
   - GOBIN=${HOME}/bin
   - PATH=${PATH}:${GOBIN}
-  - secure: TcEm3vTS8XzbhEb2R3mWWXxDE03xjv2SNFnL61A/SZCfC4C4d9rDj+5HSZUHNX0TkDbAD7C8MQNKyzdcGRYkYWsniukwKvm0ha/YWRfCRrZIxU/thCBukM1I6NiltaIq8Boea/F+PihOBua7NuNuduF45VmDwUa98ocS1f2kezI=
+  - secure: CLHfH5GUy246PG1lD6pGvmQfV6vPNY0XyiyiWMku7/UJsruyhidtzn6gYbuvVI7I3Qdr4zTviyxC9QQfYg6LhwTNy8/VNNDmXPQbpIlFHTEbK0sk2s7H6cXv0bVhL/FAxTgRP/n/YYpkgGOdeZMOLqU0tTcJh3PWsr8KXNJTYJw=
 install:
-- mkdir ${HOME}/bin
+- mkdir -p ${HOME}/bin
 - go get golang.org/x/tools/cmd/vet
 - go get github.com/golang/lint/golint
 - go get golang.org/x/tools/cmd/cover
