@@ -1,4 +1,4 @@
-package sscc
+package spotify
 
 import (
 	"crypto/tls"

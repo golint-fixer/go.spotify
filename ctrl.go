@@ -1,4 +1,4 @@
-package sscc
+package spotify
 
 // Controller describes operations available through package.
 type Controller interface {
@@ -28,6 +28,7 @@ type Context struct {
 	Exec   Execer   // Exec is an implementation of `Procer`.
 	Dbus   Dbuser   // Dbus is an implementation of `Dbuser`.
 	Search Searcher // Search is an implementation of `Searcher`.
+	Name   string   // Name is a name of process.
 }
 
 // execer returns `Execer` implementation.
@@ -35,7 +36,7 @@ func (ctx *Context) execer() Execer {
 	if ctx.Exec != nil {
 		return ctx.Exec
 	}
-	return newExecer()
+	return NewExecer(ctx)
 }
 
 // dbuser returns `Dbuser` implementation.
@@ -43,7 +44,7 @@ func (ctx *Context) dbuser() Dbuser {
 	if ctx.Dbus != nil {
 		return ctx.Dbus
 	}
-	return newDbuser()
+	return NewDbuser()
 }
 
 // searcher returns `Searcher` implementation.
@@ -52,4 +53,12 @@ func (ctx *Context) searcher() Searcher {
 		return ctx.Search
 	}
 	return newSearcher()
+}
+
+// name returns name of Spotify process for `dbuser`.
+func (ctx *Context) name() string {
+	if ctx.Name != "" {
+		return ctx.Name
+	}
+	return "spotify"
 }

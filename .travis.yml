@@ -1,14 +1,11 @@
 language: go
-
 go:
 - 1.4
-
 env:
   global:
   - GOBIN=${HOME}/bin
   - PATH=${PATH}:${GOBIN}
-  - secure: L56CDUooHBRiMioOCwqtyGBQiSPSyP3R0wqbcBrZhka36VfnXLEhVW+lAeaJvW4LO6mf30VRlttA55OBcxgoQZgKs1n9ODlLkCq0LyGEeDEQmZevW62cS5XDZ2HfIlh9mZo+f9yQuBu1KMSUgQ7AQYlz24pk5jbNsNPngxAS/1U=
-
+  - secure: TcEm3vTS8XzbhEb2R3mWWXxDE03xjv2SNFnL61A/SZCfC4C4d9rDj+5HSZUHNX0TkDbAD7C8MQNKyzdcGRYkYWsniukwKvm0ha/YWRfCRrZIxU/thCBukM1I6NiltaIq8Boea/F+PihOBua7NuNuduF45VmDwUa98ocS1f2kezI=
 install:
 - mkdir ${HOME}/bin
 - go get golang.org/x/tools/cmd/vet
@@ -16,12 +13,12 @@ install:
 - go get golang.org/x/tools/cmd/cover
 - go get github.com/mattn/goveralls
 - go get github.com/modocache/gover
-
 script:
 - golint ./...
 - go vet ./...
 - go get -t ./...
 - go test -v -race ./...
-- go list -f '{{if len .TestGoFiles}}"go test -coverprofile={{.Dir}}/.coverprofile {{.ImportPath}}"{{end}}' ./... | xargs -i sh -c {}
+- go list -f '{{if len .TestGoFiles}}"go test -coverprofile={{.Dir}}/.coverprofile
+  {{.ImportPath}}"{{end}}' ./... | xargs -i sh -c {}
 - gover
 - goveralls -coverprofile=gover.coverprofile -service=travis-ci -repotoken=$COVERALLS_TOKEN

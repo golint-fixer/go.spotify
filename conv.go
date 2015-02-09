@@ -1,4 +1,4 @@
-package sscc
+package spotify
 
 // conv converts data structures from one format to another in a following way:
 // - artistResp -> []Artist

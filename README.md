@@ -1,16 +1,17 @@
-sscc [![GoDoc](https://godoc.org/github.com/pblaszczyk/sscc?status.png)](https://godoc.org/github.com/pblaszczyk/sscc) [![Build Status](https://travis-ci.org/pblaszczyk/sscc.svg?branch=master)](https://travis-ci.org/pblaszczyk/sscc) [![Coverage Status](https://img.shields.io/coveralls/pblaszczyk/sscc.svg)](https://coveralls.io/r/pblaszczyk/sscc)
+go.spotify [![GoDoc](https://godoc.org/github.com/xhaarq/go.spotify?status.png)](https://godoc.org/github.com/xhaarq/go.spotify) [![Build Status](https://travis-ci.org/xhaarq/go.spotify.svg?branch=master)](https://travis-ci.org/xhaarq/go.spotify) [![Coverage Status](https://img.shields.io/coveralls/xhaarq/go.spotify.svg)](https://coveralls.io/r/xhaarq/go.spotify)
 ========
 
-sscc is a set of tools used by cmd/ssc in order to control Spotify desktop
-application on Linux and use Web API in order to search for artists/albums/tracks.
+go.spotify is a set of tools used by cmd/spotifycli in order to control
+Spotify desktop application on Linux and use Web API in order to search
+for artists/albums/tracks.
 
 #### Installation
 
-In order to install sscc application in your environment, Go compiler is required.
-If environment is configured, please run:
+In order to install go.spotify application in your environment,
+Go compiler is required. If environment is configured, please run:
 
 ```
-~ $ go get -u github.com/pblaszczyk/sscc/cmd/sscc
+~ $ go get -u github.com/xhaarq/go.spotify/cmd/spotifycli
 ```
 
 #### Usage
@@ -18,5 +19,5 @@ If environment is configured, please run:
 In order to see available commands please run:
 
 ```
-~ $ sscc -h
+~ $ spotifycli -h
 ```

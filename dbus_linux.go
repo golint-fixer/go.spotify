@@ -1,4 +1,6 @@
-package sscc
+// +build linux
+
+package spotify
 
 import (
 	"fmt"
@@ -37,8 +39,8 @@ type dbus struct {
 	o *dbs.Object // o is a dbus control object.
 }
 
-// newDbuser returns a default implementation of `Dbuser`.
-func newDbuser() Dbuser {
+// NewDbuser returns a default implementation of `Dbuser`.
+func NewDbuser() Dbuser {
 	return &dbus{}
 }
 
@@ -261,28 +263,6 @@ func (d *dbus) noArgsMethod(method string) error {
 		return err
 	}
 	return d.o.Call(method, 0).Err
-}
-
-// dbusErr is an error returned for invalid dbus response.
-type dbusErr struct {
-	msg string
-}
-
-// Error implements `error`.
-func (e *dbusErr) Error() string {
-	return e.msg
-}
-
-// newDbusError returns instance of `*dbusErr`.
-func newDbusError(format string, a ...interface{}) error {
-	return &dbusErr{fmt.Sprintf(format, a...)}
-}
-
-// IsDbus returns a boolean indicating whether the error is known to report
-// that dbus operation failed.
-func IsDbus(err error) (ok bool) {
-	_, ok = err.(*dbusErr)
-	return
 }
 
 // invDbusResp is a format of an error message for an invalid dbus response.
