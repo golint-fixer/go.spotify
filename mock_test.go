@@ -3,7 +3,19 @@ package spotify
 import (
 	"io"
 	"net/http"
+	"os"
+	"testing"
+	"time"
 )
+
+const testEnv = "SPOTIFY_APP_MOCK"
+
+func TestMockApp(t *testing.T) {
+	if os.Getenv(testEnv) == "" {
+		t.Skip("helper test only")
+	}
+	<-time.After(time.Minute)
+}
 
 type getMock struct {
 	d []string

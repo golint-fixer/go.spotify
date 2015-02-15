@@ -5,153 +5,159 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestIsEOF(t *testing.T) {
 	t.Parallel()
-	for i, c := range []struct {
-		e error
-		r bool
+	cases := []struct {
+		err error
+		res bool
 	}{
-		{errEOF, true}, {errors.New(""), false}, {nil, false},
-	} {
-		if ok := IsEOF(c.e); ok != c.r {
-			t.Errorf("want %t==%t (%d)", ok, c.r, i)
+		{
+			err: errEOF,
+			res: true,
+		},
+		{
+			err: errors.New(""),
+			res: false,
+		},
+		{
+			err: nil,
+			res: false,
+		},
+	}
+	for i, cas := range cases {
+		if ok := IsEOF(cas.err); ok != cas.res {
+			t.Errorf("want ok=cas.res; %t==%t (%d)", ok, cas.res, i)
 		}
 	}
 }
 
-func TestSearchArtist(t *testing.T) {
+func TestArtist(t *testing.T) {
 	t.Parallel()
-	ctrl := NewControl(&Context{
-		nil,
-		nil,
-		web{
-			g: &getMock{
-				d: []string{
-					jsonData(t, "artist_1.json"),
-					jsonData(t, "artist_2.json"),
-				},
+	s := &Search{
+		get: &getMock{
+			d: []string{
+				jsonData(t, "artist_1.json"),
+				jsonData(t, "artist_2.json"),
 			},
-			rl: 5,
 		},
-		"",
-	})
+		batch: 5,
+	}
 	ch, err := make(chan []Artist), make(chan error, 1)
-	ctrl.SearchArtist("", ch, err)
-	i := 0
-	for c := range ch {
-		length := len(searchArtistFixt.res)
-		if i >= length {
-			t.Errorf("want %d < %d (%d)", i, length, i)
-		}
-		if !reflect.DeepEqual(c, searchArtistFixt.res[i]) {
-			t.Errorf("want %v==%v (%d)", c, searchArtistFixt.res[i], i)
-		}
-		i++
-	}
-	expectErr(t, err, i)
-}
-
-func expectErr(t *testing.T, err chan error, i int) {
-	select {
-	case err := <-err:
-		if ok := IsEOF(err); !ok {
-			t.Errorf("want %t==false (%d)", ok, i)
-		}
-	default:
-		t.Fail()
-	}
-}
-
-func TestSearchAlbum(t *testing.T) {
-	t.Parallel()
-	ctrl := NewControl(&Context{
-		nil,
-		nil,
-		web{
-			&getMock{
-				d: []string{
-					jsonData(t, "album_1.json"),
-					jsonData(t, "album_1_artist_1.json"),
-					jsonData(t, "album_1_artist_2.json"),
-					jsonData(t, "album_1_artist_1.json"),
-					jsonData(t, "album_1_artist_2.json"),
-					jsonData(t, "album_1_artist_1.json"),
-					jsonData(t, "album_2.json"),
-					jsonData(t, "album_1_artist_2.json"),
-				},
-			},
-			5,
-		},
-		"",
-	})
-	ch, err := make(chan []Album), make(chan error, 1)
-	ctrl.SearchAlbum("", ch, err)
-	i := 0
-	for c := range ch {
-		length := len(searchAlbumFixt.res)
-		if i >= length {
-			t.Errorf("want %d < %d (%d)", i, length, i)
-		}
-		for j := range c {
-			if !reflect.DeepEqual(c[j], searchAlbumFixt.res[i][j]) {
-				t.Errorf("want %v=%v (%d)", c[j], searchAlbumFixt.res[i][j], i)
+	s.Artist("", ch, err)
+	for i := 0; ; i++ {
+		l := len(searchArtistFixt.res)
+		select {
+		case c := <-ch:
+			if l := l - 1; i >= l {
+				t.Errorf("want i<l; %d<%d (%d)", i, l, i)
 			}
+			if !reflect.DeepEqual(c, searchArtistFixt.res[i]) {
+				t.Errorf("want c=searchArtistFixt.res[i]; got %v==%v (%d)",
+					c, searchArtistFixt.res[i], i)
+			}
+		case e := <-err:
+			if l := l - 1; i != l {
+				t.Errorf("error expected for i=%d; got %d", i, l)
+			}
+			if !IsEOF(e) {
+				t.Errorf("want e=errEOF; err: %q (%d)", e, i)
+			}
+			return
 		}
-		i++
 	}
-	expectErr(t, err, i)
 }
 
-func TestSearchTrack(t *testing.T) {
+func TestAlbum(t *testing.T) {
 	t.Parallel()
-	ctrl := NewControl(&Context{
-		nil,
-		nil,
-		web{
-			&getMock{
-				d: []string{
-					jsonData(t, "track_1.json"),
-					jsonData(t, "track_2.json"),
-				},
+	s := NewSearch()
+	s = &Search{
+		get: &getMock{
+			d: []string{
+				jsonData(t, "album_1.json"),
+				jsonData(t, "album_1_artist_1.json"),
+				jsonData(t, "album_1_artist_2.json"),
+				jsonData(t, "album_1_artist_1.json"),
+				jsonData(t, "album_1_artist_2.json"),
+				jsonData(t, "album_1_artist_1.json"),
+				jsonData(t, "album_2.json"),
+				jsonData(t, "album_1_artist_2.json"),
 			},
-			2,
 		},
-		"",
-	})
+		batch: 5,
+	}
+	ch, err := make(chan []Album), make(chan error, 1)
+	s.Album("", ch, err)
+	for i := 0; ; i++ {
+		l := len(searchAlbumFixt.res)
+		select {
+		case c := <-ch:
+			for j := range c {
+				if !reflect.DeepEqual(c[j], searchAlbumFixt.res[i][j]) {
+					t.Errorf("want %v=%v (%d)", c[j], searchAlbumFixt.res[i][j], i)
+				}
+			}
+		case e := <-err:
+			if l := l - 1; i != l {
+				t.Errorf("error expected for i=%d; got %d", i, l)
+			}
+			if !IsEOF(e) {
+				t.Errorf("want e=errEOF; err: %q (%d)", e, i)
+			}
+			return
+		}
+	}
+}
+
+func TestTrack(t *testing.T) {
+	t.Parallel()
+	s := &Search{
+		get: &getMock{
+			d: []string{
+				jsonData(t, "track_1.json"),
+				jsonData(t, "track_2.json"),
+			},
+		},
+		batch: 5,
+	}
 	ch, err := make(chan []Track), make(chan error, 1)
-	ctrl.SearchTrack("", ch, err)
-	i := 0
-	for c := range ch {
-		length := len(searchTrackFixt.res)
-		if i >= length {
-			t.Errorf("want %d < %d (%d)", i, length, i)
+	s.Track("", ch, err)
+	for i := 0; ; i++ {
+		l := len(searchTrackFixt.res)
+		select {
+		case c := <-ch:
+			if l := l - 1; i >= l {
+				t.Errorf("want i<l; %d<%d (%d)", i, l, i)
+			}
+			if !reflect.DeepEqual(c, searchTrackFixt.res[i]) {
+				t.Errorf("want c=searchTrackFixt.res[i]; got %v==%v (%d)",
+					c, searchTrackFixt.res[i], i)
+			}
+		case e := <-err:
+			if l := l - 1; i != l {
+				t.Errorf("error expected for i=%d; got %d", i, l)
+			}
+			if !IsEOF(e) {
+				t.Errorf("want e=errEOF; err: %q (%d)", e, i)
+			}
+			return
 		}
-		if !reflect.DeepEqual(c, searchTrackFixt.res[i]) {
-			t.Errorf("want %v==%v (%d)", c, searchTrackFixt.res[i], i)
-		}
-		i++
 	}
-	expectErr(t, err, i)
 }
 
-func TestSearchArtistError(t *testing.T) {
+func TestArtistError(t *testing.T) {
 	t.Parallel()
-	ctrl := NewControl(&Context{
-		nil,
-		nil,
-		web{
-			g: &getMock{
-				d: []string{
-					jsonData(t, "error_1.json"),
-				},
+	s := &Search{
+		get: &getMock{
+			d: []string{
+				jsonData(t, "error_1.json"),
 			},
 		},
-		"",
-	})
+	}
 	ch, err := make(chan []Artist), make(chan error, 1)
-	ctrl.SearchArtist("", ch, err)
+	s.Artist("", ch, err)
 	select {
 	case err := <-err:
 		if err == nil {
@@ -160,5 +166,8 @@ func TestSearchArtistError(t *testing.T) {
 		if ok := strings.Contains(err.Error(), "code"); !ok {
 			t.Errorf("want %t==true", ok)
 		}
+	case <-time.After(5 * time.Second):
+		t.Error("timeout")
+		return
 	}
 }

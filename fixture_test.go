@@ -4,13 +4,13 @@ import (
 	"io/ioutil"
 	"path/filepath"
 	"testing"
-
-	"github.com/pblaszczyk/gophtu/asserts"
 )
 
 func jsonData(t *testing.T, name string) string {
 	b, err := ioutil.ReadFile(filepath.Join("testdata", name))
-	asserts.Assert(t, err == nil, err, nil)
+	if err != nil {
+		t.Fatalf("want err=nil; got %q for %q", err, name)
+	}
 	return string(b)
 }
 

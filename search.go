@@ -3,7 +3,6 @@ package spotify
 import (
 	"crypto/tls"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -14,8 +13,22 @@ import (
 	"time"
 )
 
+// Search implements operations for searching through Spotify Web API.
+type Search struct {
+	get   geter // get is used for http GET requests.
+	batch uint  // batch represents number of read positions.
+}
+
+// NewSearch returns Search instance.
+func NewSearch() *Search {
+	return &Search{
+		get:   newGet(),
+		batch: 50,
+	}
+}
+
 // errEOF is returned when there is no more data to be returned.
-var errEOF = errors.New("sscc: end of response")
+var errEOF = errorf("end of response")
 
 // IsEOF returns a boolean indicating if err is known to be returned when there
 // is no more data to return.
@@ -23,79 +36,56 @@ func IsEOF(err error) bool {
 	return err == errEOF
 }
 
-// Searcher is an interface for searching for requested artists/albums/tracks.
-type Searcher interface {
-	// SearchArtist searches for requested artists.
-	SearchArtist(string, chan<- []Artist, chan<- error)
-	// SearchAlbum searches for requested albums.
-	SearchAlbum(string, chan<- []Album, chan<- error)
-	// SearchTrack searches for requested tracks.
-	SearchTrack(string, chan<- []Track, chan<- error)
+// Artist searches for requested artists. name is the name of searched artist,
+// c chan is used to return found artists and err i used to return
+// search errors.
+func (s *Search) Artist(name string, c chan<- []Artist, errch chan<- error) {
+	go s.search("artist", name, c, &artistResp{}, errch, custom)
 }
 
-// sendRes sends partial results through channel.
-func sendRes(res interface{}, v interface{}) {
-	r := reflect.New(reflect.TypeOf(res).Elem())
-	r.Elem().Set(reflect.ValueOf(v))
-	reflect.ValueOf(res).Send(r.Elem())
+// Album searches for requested albums. name is the name of searched album,
+// c chan is used to return found albums and err i used to return
+// search errors.
+func (s *Search) Album(name string, c chan<- []Album, errch chan<- error) {
+	go s.search("album", name, c, &albumResp{}, errch, (*Search).lookupAlbums)
 }
 
-type cstm func(web, interface{}) error
-
-type respParam struct {
-	t string
-	r interface{}
-	f cstm
+// Track searches for requested tracks. name is the name of searched track,
+// c chan is used to return found tracks and err i used to return
+// search errors.
+func (s *Search) Track(name string, c chan<- []Track, errch chan<- error) {
+	go s.search("track", name, c, &trackResp{}, errch, custom)
 }
 
-const (
-	timeout = 30 * time.Second // timeout for http call.
-)
-
-// SearchArtist implements `Searcher`.
-func (w web) SearchArtist(name string, c chan<- []Artist, err chan<- error) {
-	go w.s("artist", name, c, &artistResp{}, err, nil)
+var custom = func(_ *Search, _ interface{}) (_ error) {
+	return
 }
 
-// SearchAlbum implements `Searcher`.
-func (w web) SearchAlbum(name string, c chan<- []Album, err chan<- error) {
-	go w.s("album", name, c, &albumResp{}, err, web.lookupAlbums)
-}
-
-// SearchTrack implements `Searcher`.
-func (w web) SearchTrack(name string, c chan<- []Track, err chan<- error) {
-	go w.s("track", name, c, &trackResp{}, err, nil)
-}
-
-// s searches for requested artist/album/track and sends results through
+// search searches for requested artist/album/track and sends results through
 // channel when they are available.
-func (w web) s(s, v string, r, resp interface{}, err chan<- error, f cstm) {
+func (s *Search) search(tag, value string, r, resp interface{},
+	errch chan<- error, f func(*Search, interface{}) error) {
 	p, e, m := uint(0), error(nil), resp
-	defer func() {
-		reflect.ValueOf(r).Close()
-	}()
 	for {
-		if e = w.read(s, v, p, w.rl, resp); e != nil && !IsEOF(e) {
-			err <- e
+		if e = s.read(tag, value, p, s.batch, resp); e != nil && !IsEOF(e) {
+			errch <- e
 			return
 		}
 		u := conv(resp)
-		if f != nil {
-			if err2 := f(w, u); err2 != nil {
-				err <- err2
-			}
+		if err := f(s, u); err != nil {
+			errch <- err
 		}
-		p += w.rl
+		p += s.batch
 		sendRes(r, u)
 		if IsEOF(e) {
-			err <- e
+			errch <- e
 			return
 		}
 		resp = reflect.New(reflect.TypeOf(m).Elem()).Interface()
 	}
 }
 
-var errInvResp = errors.New("sscc: creating response failed")
+var errInvResp = errorf("creating response failed")
 
 // strings used for interacting with Spotify Web API
 const (
@@ -114,12 +104,12 @@ const (
 	next     = "Next"
 )
 
-// read creates http request based on provided search keyword `s`, value `val`,
-// limit of elements to obtain `lim` and stores result in `resp`.
+// read creates HTTP request based on provided search keyword t, value val,
+// limit of elements to obtain lim and stores result in resp.
 // If no more data is available to return, it returns errEOF and stores
-// remaining data in `resp`.
-func (w web) read(s, val string, off, lim uint, resp interface{}) error {
-	r, err := w.g.get(fmt.Sprintf(queryURL, url.QueryEscape(val), s, off, lim))
+// remaining data in resp.
+func (s *Search) read(t, val string, off, lim uint, resp interface{}) error {
+	r, err := s.get.get(fmt.Sprintf(queryURL, url.QueryEscape(val), t, off, lim))
 	if err != nil {
 		return err
 	}
@@ -158,13 +148,11 @@ func unmarshal(body []byte, resp interface{}) error {
 
 // lookupAlbums goes through all obtained albums by query of album
 // and fills in data structure with information about their artists.
-func (w web) lookupAlbums(d interface{}) (err error) {
+func (s *Search) lookupAlbums(d interface{}) (err error) {
+	r, body, resp := &http.Response{}, []byte(nil), albumArtist{}
 	res := d.([]Album)
-	var r *http.Response
-	var body []byte
-	var resp albumArtist
 	for i := range res {
-		if r, err = w.g.get(fmt.Sprintf(lookupURL, lookupAlbum,
+		if r, err = s.get.get(fmt.Sprintf(lookupURL, lookupAlbum,
 			strings.TrimPrefix(res[i].URI, "spotify:album:"))); err != nil {
 			return
 		}
@@ -178,30 +166,36 @@ func (w web) lookupAlbums(d interface{}) (err error) {
 		}
 		for j := range resp.Artists {
 			res[i].Artists = append(res[i].Artists,
-				Artist{URI: resp.Artists[j].URI, Name: resp.Artists[j].Name})
+				Artist{
+					URI:  resp.Artists[j].URI,
+					Name: resp.Artists[j].Name,
+				})
 		}
 		r.Body.Close()
 	}
 	return
 }
 
-type web struct {
-	g  geter
-	rl uint
+// sendRes sends partial results through channel.
+func sendRes(res, v interface{}) {
+	r := reflect.New(reflect.TypeOf(res).Elem())
+	r.Elem().Set(reflect.ValueOf(v))
+	reflect.ValueOf(res).Send(r.Elem())
 }
 
-func newSearcher() *web {
-	return &web{newGet(), 50}
-}
+const timeout = 30 * time.Second // timeout for HTTP requests.
 
+// geter is an interface for HTTP GET requests.
 type geter interface {
 	get(string) (*http.Response, error)
 }
 
+// get is a control structure implementing geter.
 type get struct {
 	c *http.Client
 }
 
+// get implements geter.
 func (g get) get(url string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -210,6 +204,7 @@ func (g get) get(url string) (*http.Response, error) {
 	return g.c.Do(req)
 }
 
+// newGet returns a default implementation of geter.
 func newGet() geter {
 	return get{
 		&http.Client{

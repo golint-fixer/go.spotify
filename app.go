@@ -1,115 +1,117 @@
 package spotify
 
 import (
-	"errors"
-	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sync"
 )
 
-// NewExecer returns default implementation of `Execer`.
-func NewExecer(ctx *Context) Execer {
-	n := exename(ctx.name())
-	return &execer{
-		cmd:  exec.Command(n),
-		name: n,
+// NewApp returns new instance of App.
+func NewApp(name string, args ...string) (app *App, err error) {
+	if name == "" {
+		name = "spotify"
 	}
+	if name, err = exec.LookPath(name); err != nil {
+		return
+	}
+	app = &App{
+		cmd:  exec.Command(name, args...),
+		name: filepath.Base(name),
+	}
+	return
 }
 
-// Execer represents available operations on Spotify process.
-type Execer interface {
-	Start() error  // Start starts Spotify.
-	Kill() error   // Kill stops Spotify.
-	Attach() error // Attach connects to an already running Spotify.
-	Ping() error   // Ping checks if Spotify is already running.
-}
-
-// execer is a default implementation of `Execer`.
-type execer struct {
+// App is a representation of Spotify desktop application.
+type App struct {
 	sync.Mutex
-	cmd  *exec.Cmd // cmd is used to control execeress.
-	name string    // name is the name of executable.
+	cmd  *exec.Cmd
+	name string
 }
 
-// ErrIsRunning is returned if Spotify is already running.
-var ErrIsRunning = errors.New("spotify: app is already running")
+// ErrIsRunning is returned if application is already running.
+var ErrIsRunning = errorf("app is already running")
 
 // IsRunning returns a boolean indicating whether the error is known to report
-// that requested execeress is already running.
+// that requested process is already running.
 func IsRunning(err error) bool {
 	return err == ErrIsRunning
 }
 
-// Start implements `Execer`.
-func (e *execer) Start() error {
-	e.Lock()
-	defer e.Unlock()
-	if err := e.Ping(); err == nil {
+// Start starts Spotify desktop application.
+func (a *App) Start() (err error) {
+	a.Lock()
+	if err = a.Ping(); err == nil {
+		a.Unlock()
 		return ErrIsRunning
 	}
-	return e.start()
-}
-
-// Kill implements `Execer`.
-func (e *execer) Kill() error {
-	e.Lock()
-	defer e.Unlock()
-	if err := e.attach(); err != nil {
-		return err
-	}
-	return e.kill()
-}
-
-// Attach implements `Execer`.
-func (e *execer) Attach() error {
-	e.Lock()
-	defer e.Unlock()
-	return e.attach()
-}
-
-// Ping implements `Execer`.
-func (e *execer) Ping() (err error) {
-	_, err = pid(e.name)
+	err = a.start()
+	a.Unlock()
 	return
 }
 
-func (e *execer) attach() error {
-	pid, err := pid(e.name)
+// Kill kills Spotify desktop application.
+func (a *App) Kill() (err error) {
+	a.Lock()
+	if !a.connected() {
+		if err = a.attach(); err != nil {
+			a.Unlock()
+			return err
+		}
+	}
+	err = a.kill()
+	a.Unlock()
+	return
+}
+
+// Attach binds data structure with already running Spotify desktop application.
+func (a *App) Attach() (err error) {
+	a.Lock()
+	err = a.attach()
+	a.Unlock()
+	return
+}
+
+// Ping checks if Spotify desktop application is running.
+func (a *App) Ping() (err error) {
+	_, err = pid(a.name)
+	return
+}
+
+// Connected returns a boolean indicating of a is connected to a Spotify
+// instance.
+func (a *App) Connected() (ok bool) {
+	a.Lock()
+	ok = a.connected()
+	a.Unlock()
+	return
+}
+
+func (a *App) connected() bool {
+	return a.cmd != nil && a.cmd.Process != nil && a.cmd.Process.Pid != 0
+}
+
+func (a *App) attach() error {
+	pid, err := pid(a.name)
 	if err != nil {
 		return err
 	}
-	e.cmd.Process = &os.Process{
+	a.cmd.Process = &os.Process{
 		Pid: int(pid),
 	}
 	return nil
 }
 
-func (e *execer) start() error {
-	if err := e.cmd.Start(); err != nil {
-		return fmt.Errorf("spotify: failed to start: %q", err)
+func (a *App) start() error {
+	if err := a.cmd.Start(); err != nil {
+		return errorf("failed to start: %q", err)
 	}
 	return nil
 }
 
-func (e *execer) kill() error {
-	if err := e.cmd.Process.Kill(); err != nil {
-		return fmt.Errorf("spotify: failed to stop: %q", err)
+func (a *App) kill() error {
+	if err := a.cmd.Process.Kill(); err != nil {
+		return errorf("failed to stop: %q", err)
 	}
 	return nil
-}
-
-func min(x int32, y int64) int32 {
-	if x < int32(y) {
-		return x
-	}
-	return int32(y)
-}
-
-func outerr(out []byte, err error) (string, error) {
-	o := "<no output>"
-	if out != nil {
-		o = string(out)
-	}
-	return o, err
 }

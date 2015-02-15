@@ -3,49 +3,29 @@
 package spotify
 
 import (
-	"fmt"
 	"sync"
 	"time"
 
 	dbs "github.com/guelfey/go.dbus"
 )
 
-// Dbuser describe operations on Spotify's dbus interface.
-type Dbuser interface {
-	Open(URI) error                 // Open starts playing track with `URI`.
-	Play() error                    // Play plays currently active track.
-	Stop() error                    // Stop stops playing current track.
-	Pause() error                   // Pause pauses currently played track.
-	Toggle() error                  // Toggle toggles between play & pause state.
-	Next() error                    // Next plays next track.
-	Prev() error                    // Prev plays previous track.
-	Goto(time.Duration) error       // Goto seeks for offset µs.
-	SetPos(time.Duration) error     // SetPos goes to specified positionk.
-	Length() (time.Duration, error) // Length returns length of current track.
-	Raise() error                   // Raise raises Spotify app.
-	Quit() error                    // Quit quits Spotify app.
-	CurTrack() (Track, error)       // CurTrack returns currently played track.
-	Status() (Status, error)        // Status returns current status of an app.
-	Pos() (time.Duration, error)    // Pos returns current position.
-	CanPlay() (bool, error)         // CanPlay returns info if you can play.
-	CanNext() (bool, error)         // CanNext checks if next is available.
-	CanPrev() (bool, error)         // CanPrev checks if prev is available.
-	CanControl() (bool, error)      // CanControl checks if control is available.
-}
-
-// dbus is a default implementation of `Dbuser`.
-type dbus struct {
+// Dbus is a structure implementing Dbus logic controlling Spotify
+// desktop application.
+type Dbus struct {
 	sync.Mutex
 	o *dbs.Object // o is a dbus control object.
 }
 
-// NewDbuser returns a default implementation of `Dbuser`.
-func NewDbuser() Dbuser {
-	return &dbus{}
+// NewDbus returns a new instance of Dbus.
+func NewDbus() (*Dbus, error) {
+	d := &Dbus{}
+	if err := d.init(); err != nil {
+		return nil, err
+	}
+	return d, nil
 }
 
-// init initializes dbus if not yet done.
-func (d *dbus) init() error {
+func (d *Dbus) init() error {
 	d.Lock()
 	defer d.Unlock()
 	if d.o != nil {
@@ -53,52 +33,49 @@ func (d *dbus) init() error {
 	}
 	c, err := dbs.SessionBus()
 	if err != nil {
-		return fmt.Errorf("sscc: failed to init dbus session: %q", err)
+		return errorf("failed to init dbus session: %q", err)
 	}
 	d.o = c.Object(dest, objPath)
 	return nil
 }
 
-// Next implements `Dbuser`.
-func (d *dbus) Next() error {
+// Next plays next track.
+func (d *Dbus) Next() error {
 	return d.noArgsMethod(methodNext)
 }
 
-// Prev implements `Dbuser`.
-func (d *dbus) Prev() error {
+// Prev plays previous track.
+func (d *Dbus) Prev() error {
 	return d.noArgsMethod(methodPrev)
 }
 
-// Pause implements `Dbuser`.
-func (d *dbus) Pause() error {
+// Pause pauses currently played track.
+func (d *Dbus) Pause() error {
 	return d.noArgsMethod(methodPause)
 }
 
-// Toggle implements `Dbuser`.
-func (d *dbus) Toggle() error {
+// Toggle toggles between play & pause state.
+func (d *Dbus) Toggle() error {
 	return d.noArgsMethod(methodPlayPause)
 }
 
-// Stop implements `Dbuser`.
-func (d *dbus) Stop() error {
+// Stop stops playing current track.
+func (d *Dbus) Stop() error {
 	return d.noArgsMethod(methodStop)
 }
 
-// Play implements `Dbuser`.
-func (d *dbus) Play() error {
+// Play plays currently active track.
+func (d *Dbus) Play() error {
 	return d.noArgsMethod(methodPlay)
 }
 
-// Goto implements `Dbuser`.
-func (d *dbus) Goto(offset time.Duration) error {
-	if err := d.init(); err != nil {
-		return err
-	}
+// Goto seeks for offset µs.
+func (d *Dbus) Goto(offset time.Duration) error {
 	return d.o.Call(methodSeek, 0, offset.Nanoseconds()*1000).Err
 }
 
-// SetPos implements `Dbuser`.
-func (d *dbus) SetPos(pos time.Duration) error {
+// SetPos goes to specified positionk.
+func (d *Dbus) SetPos(pos time.Duration) error {
 	track, err := d.CurTrack()
 	if err != nil {
 		return err
@@ -107,29 +84,23 @@ func (d *dbus) SetPos(pos time.Duration) error {
 		pos.Nanoseconds()*1000).Err
 }
 
-// Open implements `Dbuser`.
-func (d *dbus) Open(uri URI) error {
-	if err := d.init(); err != nil {
-		return err
-	}
+// Open starts playing track with URI.
+func (d *Dbus) Open(uri URI) error {
 	return d.o.Call(methodOpenURI, 0, string(uri)).Err
 }
 
-// Quit implements `Dbuser`.
-func (d *dbus) Quit() error {
+// Quit quits Spotify app.
+func (d *Dbus) Quit() error {
 	return d.noArgsMethod(methodQuit)
 }
 
-// Raise implements `Dbuser`.
-func (d *dbus) Raise() error {
+// Raise raises Spotify app.
+func (d *Dbus) Raise() error {
 	return d.noArgsMethod(methodRaise)
 }
 
-// CurTrack implements `Dbuser`.
-func (d *dbus) CurTrack() (track Track, err error) {
-	if err = d.init(); err != nil {
-		return
-	}
+// CurTrack returns currently played track.
+func (d *Dbus) CurTrack() (track Track, err error) {
 	v, err := d.o.GetProperty(propMetadata)
 	if err != nil {
 		return
@@ -137,7 +108,7 @@ func (d *dbus) CurTrack() (track Track, err error) {
 	m, ok := v.Value().(map[string]dbs.Variant)
 	defer func() {
 		if !ok {
-			err = fmt.Errorf(invDbusResp, v.Value())
+			err = errorf(invDbusResp, v.Value())
 			return
 		}
 	}()
@@ -161,27 +132,21 @@ func (d *dbus) CurTrack() (track Track, err error) {
 	return
 }
 
-// Status implements `Dbuser`.
-func (d *dbus) Status() (Status, error) {
-	if err := d.init(); err != nil {
-		return Status(""), err
-	}
+// Status returns current status of an app.
+func (d *Dbus) Status() (Status, error) {
 	v, err := d.o.GetProperty(propPlaybackStatus)
 	if err != nil {
 		return Status(""), err
 	}
 	status, ok := v.Value().(string)
 	if !ok {
-		return Status(""), fmt.Errorf(invDbusResp, v.Value())
+		return Status(""), errorf(invDbusResp, v.Value())
 	}
 	return makeStatus(status)
 }
 
-// Length implements `Dbuser`.
-func (d *dbus) Length() (l time.Duration, err error) {
-	if err = d.init(); err != nil {
-		return
-	}
+// Length returns length of current track.
+func (d *Dbus) Length() (l time.Duration, err error) {
 	v, err := d.o.GetProperty(propMetadata)
 	if err != nil {
 		return
@@ -189,7 +154,7 @@ func (d *dbus) Length() (l time.Duration, err error) {
 	m, ok := v.Value().(map[string]dbs.Variant)
 	defer func() {
 		if !ok {
-			err = fmt.Errorf(invDbusResp, v.Value())
+			err = errorf(invDbusResp, v.Value())
 			return
 		}
 	}()
@@ -204,69 +169,60 @@ func (d *dbus) Length() (l time.Duration, err error) {
 	return
 }
 
-// Pos implements `Dbuser`.
-func (d *dbus) Pos() (time.Duration, error) {
-	if err := d.init(); err != nil {
-		return 0, err
-	}
+// Pos returns current position.
+func (d *Dbus) Pos() (time.Duration, error) {
 	v, err := d.o.GetProperty(propPos)
 	if err != nil {
 		return 0, err
 	}
 	pos, ok := v.Value().(int64)
 	if !ok {
-		return 0, fmt.Errorf(invDbusResp, v.Value())
+		return 0, errorf(invDbusResp, v.Value())
 	}
 	return time.Duration(pos * 1000), nil
 }
 
-// CanPlay implements `Dbuser`.
-func (d *dbus) CanPlay() (bool, error) {
+// CanPlay returns info if you can play.
+func (d *Dbus) CanPlay() (bool, error) {
 	return d.boolOpt(propCanPlay)
 }
 
 // boolOpt is a helper func retrieving value of boolean property.
-func (d *dbus) boolOpt(prop string) (bool, error) {
-	if err := d.init(); err != nil {
-		return false, err
-	}
+func (d *Dbus) boolOpt(prop string) (bool, error) {
 	v, err := d.o.GetProperty(prop)
 	if err != nil {
 		return false, err
 	}
 	res, ok := v.Value().(bool)
 	if !ok {
-		return false, fmt.Errorf(invDbusResp, v.Value())
+		return false, errorf(invDbusResp, v.Value())
 	}
 	return res, nil
 }
 
-// CanNext implements `Dbuser`.
-func (d *dbus) CanNext() (bool, error) {
+// CanNext checks if next is available.
+func (d *Dbus) CanNext() (bool, error) {
 	return d.boolOpt(propCanGoNext)
 }
 
-// CanPrev implements `Dbuser`.
-func (d *dbus) CanPrev() (bool, error) {
+// CanPrev checks if prev is available.
+func (d *Dbus) CanPrev() (bool, error) {
 	return d.boolOpt(propCanGoPrev)
 }
 
-// CanControl implements `Dbuser`.
-func (d *dbus) CanControl() (bool, error) {
+// CanControl checks if control is available.
+func (d *Dbus) CanControl() (bool, error) {
 	return d.boolOpt(propCanControl)
 }
 
 // noArgsMethod is a helper function initializing `*dbuser` and calling
 // a provided method.
-func (d *dbus) noArgsMethod(method string) error {
-	if err := d.init(); err != nil {
-		return err
-	}
+func (d *Dbus) noArgsMethod(method string) error {
 	return d.o.Call(method, 0).Err
 }
 
 // invDbusResp is a format of an error message for an invalid dbus response.
-const invDbusResp = "sscc: invalid dbus response: %v"
+const invDbusResp = "invalid dbus response: %v"
 
 const (
 	dest               = "org.mpris.MediaPlayer2.spotify"
