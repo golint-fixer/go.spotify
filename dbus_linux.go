@@ -76,7 +76,7 @@ func (d *Dbus) Goto(offset time.Duration) error {
 
 // SetPos goes to specified positionk.
 func (d *Dbus) SetPos(pos time.Duration) error {
-	track, err := d.CurTrack()
+	track, err := d.Track()
 	if err != nil {
 		return err
 	}
@@ -99,8 +99,8 @@ func (d *Dbus) Raise() error {
 	return d.noArgsMethod(methodRaise)
 }
 
-// CurTrack returns currently played track.
-func (d *Dbus) CurTrack() (track Track, err error) {
+// Track returns currently played track.
+func (d *Dbus) Track() (track Track, err error) {
 	v, err := d.o.GetProperty(propMetadata)
 	if err != nil {
 		return
