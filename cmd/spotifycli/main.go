@@ -119,8 +119,10 @@ func main() {
 	case "kill":
 		handlerr(newApp().Kill())
 	case "process":
-		err := newApp().Ping()
-		handlerr(err)
+		if err := newApp().Ping(); err != nil {
+			fmt.Println("Not running")
+			os.Exit(0)
+		}
 		fmt.Println("Running")
 	case "search":
 		if len(os.Args) != 4 {
