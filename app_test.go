@@ -2,6 +2,7 @@ package spotify
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -112,7 +113,7 @@ func TestIsRunning(t *testing.T) {
 }
 
 func testKill(t *testing.T, start, cop, isnil bool, i int) {
-	td, n, err := copyexec(t, "killmock", os.Args[0], i)
+	td, n, err := copyexec(t, fmt.Sprintf("killmock%d", i), os.Args[0], i)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
@@ -162,7 +163,7 @@ func TestKill(t *testing.T) {
 }
 
 func testAttach(t *testing.T, start, cop, isnil bool, i int) {
-	td, n, err := copyexec(t, "attachmock", os.Args[0], i)
+	td, n, err := copyexec(t, fmt.Sprintf("attachmock%d", i), os.Args[0], i)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
@@ -217,7 +218,7 @@ func TestAttach(t *testing.T) {
 }
 
 func testPing(t *testing.T, start, cop, isnil bool, i int) {
-	td, n, err := copyexec(t, "pingmock", os.Args[0], i)
+	td, n, err := copyexec(t, fmt.Sprintf("pingmock%d", i), os.Args[0], i)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
@@ -300,7 +301,7 @@ func TestNewApp(t *testing.T) {
 }
 
 func testConnected(t *testing.T, start, cop, cn bool, i int) {
-	td, n, err := copyexec(t, "conmock", os.Args[0], i)
+	td, n, err := copyexec(t, fmt.Sprintf("conmock%d", i), os.Args[0], i)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
