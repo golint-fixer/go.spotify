@@ -135,7 +135,7 @@ func testKill(t *testing.T, start, cop, isnil bool, i int) {
 		}
 	}
 	if err = app.Kill(); (err == nil) != isnil {
-		t.Errorf("want (err=nil)=isnil; err %q, isnil: %t (%d)", err, isnil, i)
+		t.Errorf("want (err=nil)=isnil; err %v, isnil: %t (%d)", err, isnil, i)
 	}
 }
 
@@ -185,7 +185,7 @@ func testAttach(t *testing.T, start, cop, isnil bool, i int) {
 		}
 	}
 	if err = app.Attach(); (err == nil) != isnil {
-		t.Errorf("want (err=nil)=isnil; err %q, isnil: %t (%d)", err, isnil, i)
+		t.Errorf("want (err=nil)=isnil; err %v, isnil: %t (%d)", err, isnil, i)
 	}
 	if start {
 		if err = app.Kill(); err != nil {
@@ -240,7 +240,7 @@ func testPing(t *testing.T, start, cop, isnil bool, i int) {
 		}
 	}
 	if err = app.Ping(); (err == nil) != isnil {
-		t.Errorf("want (err=nil)=isnil; err %q, isnil: %t (%d)", err, isnil, i)
+		t.Errorf("want (err=nil)=isnil; err %v, isnil: %t (%d)", err, isnil, i)
 	}
 	if start {
 		if err = app.Kill(); err != nil {
@@ -288,7 +288,7 @@ func TestNewApp(t *testing.T) {
 	for i, cas := range cases {
 		app, err := NewApp(cas.path)
 		if (err == nil) != cas.isnil {
-			t.Errorf("want (err=nil)=cas.isnil; err: %q, cas.isnil: %t (%d)",
+			t.Errorf("want (err=nil)=cas.isnil; err: %v, cas.isnil: %t (%d)",
 				err, cas.isnil, i)
 		}
 		if cas.isnil {
