@@ -30,7 +30,7 @@ func copyexec(t *testing.T, d, s string, i int) (tdf, string, error) {
 	}
 	td = func() {
 		if err := os.RemoveAll(filepath.Dir(name)); err != nil {
-			t.Errorf("copyexec: failed to remove %q: %q (%d)", d, err, i)
+			t.Logf("copyexec: failed to remove %q: %q (%d)", d, err, i)
 		}
 	}
 	return td, name, err
