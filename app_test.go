@@ -4,8 +4,17 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
+	"time"
 )
+
+func init() {
+	if os.Getenv(testEnv) != "" {
+		<-time.After(10 * time.Minute)
+		os.Exit(0)
+	}
+}
 
 func testStart(t *testing.T, name string, isnil, exec bool, i int) {
 	td, name, err := copyexec(t, name, os.Args[0], i)
@@ -19,11 +28,24 @@ func testStart(t *testing.T, name string, isnil, exec bool, i int) {
 		return
 	}
 	if !exec {
-		if err = os.Chmod(name, 0666); err != nil {
-			t.Errorf("want err=nil; got %q (%d)", err, i)
-			return
+		if runtime.GOOS == "linux" {
+			if err = os.Chmod(name, 0666); err != nil {
+				t.Errorf("want err=nil; got %q (%d)", err, i)
+				return
+			}
+		} else {
+			if err = os.Rename(name, name+"nonexec"); err != nil {
+				t.Errorf("want err=nil; got %q (%d)", err, i)
+				return
+			}
+			name += "nonexec"
 		}
 	}
+	if err = os.Setenv(testEnv, "1"); err != nil {
+		t.Errorf("want err=nil; got %q (%d)", err, i)
+		return
+	}
+	defer os.Unsetenv(testEnv)
 	if err = app.Start(); (err == nil) != isnil {
 		t.Errorf("want (er=nil)=isnil; err: %v, isnil: %t (%d)", err, isnil, i)
 		return
@@ -45,12 +67,12 @@ func TestStart(t *testing.T) {
 		{
 			exec:  true,
 			isnil: true,
-			name:  "mock",
+			name:  "mock1",
 		},
 		{
 			exec:  false,
 			isnil: false,
-			name:  "mock",
+			name:  "mock2",
 		},
 		{
 			exec:  false,
@@ -89,14 +111,14 @@ func TestIsRunning(t *testing.T) {
 	}
 }
 
-func testKill(t *testing.T, start, cop, isnil bool, args []string, i int) {
+func testKill(t *testing.T, start, cop, isnil bool, i int) {
 	td, n, err := copyexec(t, "spotifymock", os.Args[0], i)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
 	}
 	defer td()
-	app, err := NewApp(n, args...)
+	app, err := NewApp(n)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
@@ -120,36 +142,33 @@ func testKill(t *testing.T, start, cop, isnil bool, args []string, i int) {
 func TestKill(t *testing.T) {
 	cases := []struct {
 		start bool
-		args  []string
 		cop   bool
 		isnil bool
 	}{
 		{
 			start: true,
-			args:  []string{"-test.run", "TestMockApp"},
 			cop:   true,
 			isnil: true,
 		},
 		{
 			start: false,
-			args:  nil,
 			cop:   false,
 			isnil: false,
 		},
 	}
 	for i, cas := range cases {
-		testKill(t, cas.start, cas.cop, cas.isnil, cas.args, i)
+		testKill(t, cas.start, cas.cop, cas.isnil, i)
 	}
 }
 
-func testAttach(t *testing.T, start, cop, isnil bool, args []string, i int) {
+func testAttach(t *testing.T, start, cop, isnil bool, i int) {
 	td, n, err := copyexec(t, "spotifymock", os.Args[0], i)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
 	}
 	defer td()
-	app, err := NewApp(n, args...)
+	app, err := NewApp(n)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
@@ -178,36 +197,33 @@ func testAttach(t *testing.T, start, cop, isnil bool, args []string, i int) {
 func TestAttach(t *testing.T) {
 	cases := []struct {
 		start bool
-		args  []string
 		cop   bool
 		isnil bool
 	}{
 		{
 			start: true,
-			args:  []string{"-test.run", "TestMockApp"},
 			cop:   true,
 			isnil: true,
 		},
 		{
 			start: false,
-			args:  nil,
 			cop:   false,
 			isnil: false,
 		},
 	}
 	for i, cas := range cases {
-		testAttach(t, cas.start, cas.cop, cas.isnil, cas.args, i)
+		testAttach(t, cas.start, cas.cop, cas.isnil, i)
 	}
 }
 
-func testPing(t *testing.T, start, cop, isnil bool, args []string, i int) {
+func testPing(t *testing.T, start, cop, isnil bool, i int) {
 	td, n, err := copyexec(t, "spotifymock", os.Args[0], i)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
 	}
 	defer td()
-	app, err := NewApp(n, args...)
+	app, err := NewApp(n)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
@@ -236,25 +252,22 @@ func testPing(t *testing.T, start, cop, isnil bool, args []string, i int) {
 func TestPing(t *testing.T) {
 	cases := []struct {
 		start bool
-		args  []string
 		cop   bool
 		isnil bool
 	}{
 		{
 			start: true,
-			args:  []string{"-test.run", "TestMockApp"},
 			cop:   true,
 			isnil: true,
 		},
 		{
 			start: false,
-			args:  nil,
 			cop:   false,
 			isnil: false,
 		},
 	}
 	for i, cas := range cases {
-		testPing(t, cas.start, cas.cop, cas.isnil, cas.args, i)
+		testPing(t, cas.start, cas.cop, cas.isnil, i)
 	}
 }
 
@@ -286,14 +299,14 @@ func TestNewApp(t *testing.T) {
 	}
 }
 
-func testConnected(t *testing.T, start, cop, cn bool, args []string, i int) {
+func testConnected(t *testing.T, start, cop, cn bool, i int) {
 	td, n, err := copyexec(t, "spotifymock", os.Args[0], i)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
 	}
 	defer td()
-	app, err := NewApp(n, args...)
+	app, err := NewApp(n)
 	if err != nil {
 		t.Errorf("want err=nil; got %q (%d)", err, i)
 		return
@@ -311,7 +324,6 @@ func testConnected(t *testing.T, start, cop, cn bool, args []string, i int) {
 	}
 	if res := app.Connected(); res != cn {
 		t.Errorf("want res=cn; got %t=%t (%d)", res, cn, i)
-		return
 	}
 	if start {
 		if err = app.Kill(); err != nil {
@@ -323,24 +335,21 @@ func testConnected(t *testing.T, start, cop, cn bool, args []string, i int) {
 func TestConnected(t *testing.T) {
 	cases := []struct {
 		start bool
-		args  []string
 		cop   bool
 		res   bool
 	}{
 		{
 			start: true,
-			args:  []string{"-test.run", "TestMockApp"},
 			cop:   true,
 			res:   true,
 		},
 		{
 			start: false,
-			args:  nil,
 			cop:   false,
 			res:   false,
 		},
 	}
 	for i, cas := range cases {
-		testConnected(t, cas.start, cas.cop, cas.res, cas.args, i)
+		testConnected(t, cas.start, cas.cop, cas.res, i)
 	}
 }

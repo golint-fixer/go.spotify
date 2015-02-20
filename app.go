@@ -108,10 +108,3 @@ func (a *App) start() error {
 	}
 	return nil
 }
-
-func (a *App) kill() error {
-	if err := a.cmd.Process.Kill(); err != nil {
-		return errorf("failed to stop: %q", err)
-	}
-	return nil
-}

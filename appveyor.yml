@@ -1,26 +1,29 @@
 version: "{build}"
- 
+
 os: Windows Server 2012 R2
- 
+
 clone_folder: c:\projects\src\github.com\pblaszczyk\go.spotify
- 
+
 environment:
  GOPATH: c:\projects
- 
+
 install:
- - set PATH=%GOPATH%\bin;%PATH%
+ - powershell -command "& { iwr https://storage.googleapis.com/golang/go1.4.2.windows-amd64.zip -OutFile go.zip }"
+ - unzip -qq go.zip -d c:\projects\
+ - set GOROOT=c:\projects\go
+ - set PATH=%GOROOT%\bin;%GOPATH%\bin;%PATH%
  - cd %APPVEYOR_BUILD_FOLDER%
  - go version
- - go get code.google.com/p/go.tools/cmd/vet
+ - go get golang.org/x/tools/cmd/vet
  - go get github.com/golang/lint/golint
  - go get -v -t ./...
- 
+
 build_script:
  - go tool vet -all .
  - golint .
  - go build ./...
  - go test -race -v ./...
- 
+
 test: off
- 
+
 deploy: off

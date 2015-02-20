@@ -27,3 +27,10 @@ func pid(name string) (int32, error) {
 	}
 	return pid, nil
 }
+
+func (a *App) kill() error {
+	if err := a.cmd.Process.Kill(); err != nil {
+		return errorf("failed to stop: %q", err)
+	}
+	return nil
+}
