@@ -16,12 +16,15 @@ install:
  - go version
  - go get golang.org/x/tools/cmd/vet
  - go get github.com/golang/lint/golint
+ - go get github.com/fzipp/gocyclo
  - go get -v -t ./...
 
 build_script:
  - go tool vet -all .
  - golint .
+ - gocyclo -over 10 .
  - go build ./...
+ - go install github.com/pblaszczyk/go.spotify/cmd/spotifycli
  - go test -race -v ./...
 
 test: off

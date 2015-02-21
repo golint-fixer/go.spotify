@@ -15,40 +15,74 @@ func newDbus() *spotify.Dbus {
 	return d
 }
 
-func platform() {
-	switch os.Args[1] {
-	case "next":
-		handlerr(newDbus().Next())
-	case "prev":
-		handlerr(newDbus().Prev())
-	case "open":
-		if len(os.Args) != 3 {
-			usage()
-		}
-		handlerr(newDbus().Open(spotify.URI(os.Args[2])))
-	case "play":
-		handlerr(newDbus().Play())
-	case "stop":
-		handlerr(newDbus().Stop())
-	case "toggle":
-		handlerr(newDbus().Toggle())
-	case "status":
-		status, err := newDbus().Status()
-		handlerr(err)
-		fmt.Println(status)
-	case "track":
-		track, err := newDbus().Track()
-		handlerr(err)
-		fmt.Println(track)
-	case "length":
-		length, err := newDbus().Length()
-		handlerr(err)
-		fmt.Println(length)
-	case "raise":
-		handlerr(newDbus().Raise())
-	default:
+func open() {
+	if len(os.Args) != 3 {
 		usage()
 	}
+	handlerr(newDbus().Open(spotify.URI(os.Args[2])))
+}
+
+func length() {
+	length, err := newDbus().Length()
+	handlerr(err)
+	fmt.Println(length)
+}
+
+func status() {
+	status, err := newDbus().Status()
+	handlerr(err)
+	fmt.Println(status)
+}
+
+func track() {
+	track, err := newDbus().Track()
+	handlerr(err)
+	fmt.Println(track)
+}
+
+func next() {
+	handlerr(newDbus().Next())
+}
+
+func prev() {
+	handlerr(newDbus().Prev())
+}
+
+func play() {
+	handlerr(newDbus().Play())
+}
+
+func stop() {
+	handlerr(newDbus().Stop())
+}
+
+func toggle() {
+	handlerr(newDbus().Toggle())
+}
+
+func raise() {
+	handlerr(newDbus().Raise())
+}
+
+func platform() {
+	if f, ok := cmd2func[os.Args[1]]; ok {
+		f()
+	} else {
+		usage()
+	}
+}
+
+var cmd2func = map[string]func(){
+	"next":   next,
+	"prev":   prev,
+	"open":   open,
+	"play":   play,
+	"stop":   stop,
+	"toggle": toggle,
+	"status": status,
+	"track":  track,
+	"length": length,
+	"raise":  raise,
 }
 
 func platfusage() {

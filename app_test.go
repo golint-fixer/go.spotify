@@ -17,6 +17,20 @@ func init() {
 	}
 }
 
+func maketestenv(t *testing.T, i int) (f func()) {
+	f = func() {}
+	if err := os.Setenv(testEnv, "1"); err != nil {
+		t.Errorf("want err=nil; got %q (%d)", err, i)
+		return
+	}
+	return func() {
+		if err := os.Unsetenv(testEnv); err != nil {
+			t.Errorf("want err=nil; got %q (%d)", err, i)
+			return
+		}
+	}
+}
+
 func testStart(t *testing.T, name string, isnil, exec bool, i int) {
 	td, name, err := copyexec(t, name, os.Args[0], i)
 	if err != nil {
@@ -42,11 +56,7 @@ func testStart(t *testing.T, name string, isnil, exec bool, i int) {
 			name += "nonexec"
 		}
 	}
-	if err = os.Setenv(testEnv, "1"); err != nil {
-		t.Errorf("want err=nil; got %q (%d)", err, i)
-		return
-	}
-	defer os.Unsetenv(testEnv)
+	defer maketestenv(t, i)
 	if err = app.Start(); (err == nil) != isnil {
 		t.Errorf("want (er=nil)=isnil; err: %v, isnil: %t (%d)", err, isnil, i)
 		return
@@ -125,11 +135,7 @@ func testKill(t *testing.T, start, cop, isnil bool, i int) {
 		return
 	}
 	if start {
-		if err = os.Setenv(testEnv, "1"); err != nil {
-			t.Errorf("want err=nil; got %q (%d)", err, i)
-			return
-		}
-		defer os.Unsetenv(testEnv)
+		defer maketestenv(t, i)
 		if err = app.Start(); err != nil {
 			t.Errorf("want err=nil; got %q (%d)", err, i)
 			return
@@ -175,11 +181,7 @@ func testAttach(t *testing.T, start, cop, isnil bool, i int) {
 		return
 	}
 	if start {
-		if err = os.Setenv(testEnv, "1"); err != nil {
-			t.Errorf("want err=nil; got %q (%d)", err, i)
-			return
-		}
-		defer os.Unsetenv(testEnv)
+		defer maketestenv(t, i)
 		if err = app.Start(); err != nil {
 			t.Errorf("want err=nil; got %q (%d)", err, i)
 			return
@@ -230,11 +232,7 @@ func testPing(t *testing.T, start, cop, isnil bool, i int) {
 		return
 	}
 	if start {
-		if err = os.Setenv(testEnv, "1"); err != nil {
-			t.Errorf("want err=nil; got %q (%d)", err, i)
-			return
-		}
-		defer os.Unsetenv(testEnv)
+		defer maketestenv(t, i)
 		if err = app.Start(); err != nil {
 			t.Errorf("want err=nil; got %q (%d)", err, i)
 			return
@@ -313,11 +311,7 @@ func testConnected(t *testing.T, start, cop, cn bool, i int) {
 		return
 	}
 	if start {
-		if err = os.Setenv(testEnv, "1"); err != nil {
-			t.Errorf("want err=nil; got %q (%d)", err, i)
-			return
-		}
-		defer os.Unsetenv(testEnv)
+		defer maketestenv(t, i)
 		if err = app.Start(); err != nil {
 			t.Errorf("want err=nil; got %q (%d)", err, i)
 			return

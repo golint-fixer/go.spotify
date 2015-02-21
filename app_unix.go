@@ -26,7 +26,7 @@ func pid(name string) (int32, error) {
 		pid = min(pid, int32(p))
 	}
 	if pid == int32(math.MaxInt32) {
-		return 0, errorf("failed to get PID")
+		return 0, errorf("failed to get PID: %q", out)
 	}
 	return pid, nil
 }
