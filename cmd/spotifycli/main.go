@@ -35,7 +35,7 @@ Commands:
 }
 
 func handlerr(err error) {
-	if err != nil {
+	if err != nil && !spotify.IsEOF(err) {
 		fmt.Fprintf(os.Stderr, "[spotifycli]: failed: %q", err)
 		os.Exit(1)
 	}
