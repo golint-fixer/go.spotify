@@ -1,0 +1,17 @@
+{
+	"ImportPath": "github.com/pblaszczyk/go.spotify",
+	"GoVersion": "go1.4.2",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/guelfey/go.dbus",
+			"Rev": "f6a3a2366cc39b8479cadc499d3c735fb10fbdda"
+		},
+		{
+			"ImportPath": "github.com/pblaszczyk/go.utils",
+			"Rev": "177bcf3c7f2c5feab26f4b3a0d6d15f8d6cbf5a2"
+		}
+	]
+}

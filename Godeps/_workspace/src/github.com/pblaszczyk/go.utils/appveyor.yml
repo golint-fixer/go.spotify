@@ -1,0 +1,31 @@
+version: "{build}"
+ 
+os: Windows Server 2012 R2
+ 
+clone_folder: c:\projects\src\github.com\xhaarq\go.utils
+ 
+environment:
+ GOPATH: c:\projects
+ 
+install:
+ - powershell -command "& { iwr https://storage.googleapis.com/golang/go1.4.2.windows-amd64.zip -OutFile go.zip }"
+ - unzip -qq go.zip -d c:\projects\
+ - set GOROOT=c:\projects\go
+ - set PATH=%GOROOT%\bin;%GOPATH%\bin;%PATH%
+ - cd %APPVEYOR_BUILD_FOLDER%
+ - go version
+ - go get golang.org/x/tools/cmd/vet
+ - go get github.com/golang/lint/golint
+ - go get github.com/fzipp/gocyclo
+ - go get -v -t ./...
+ 
+build_script:
+ - go tool vet -all .
+ - golint .
+ - gocyclo -over 10 .
+ - go build ./...
+ - go test -race -v ./...
+ 
+test: off
+ 
+deploy: off
