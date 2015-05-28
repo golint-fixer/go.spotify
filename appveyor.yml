@@ -16,13 +16,11 @@ install:
  - go version
  - go get golang.org/x/tools/cmd/vet
  - go get github.com/golang/lint/golint
- - go get github.com/fzipp/gocyclo
  - go get github.com/tools/godep
 
 build_script:
  - go tool vet -all .
  - golint .
- - gocyclo -over 10 *.go cmd
  - godep go build ./...
  - godep go install github.com/pblaszczyk/go.spotify/cmd/spotifycli
  - godep go test -race -v ./...
