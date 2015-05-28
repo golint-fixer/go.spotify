@@ -22,7 +22,7 @@ install:
 build_script:
  - go tool vet -all .
  - golint .
- - gocyclo -over 10 ./*.go cmd
+ - gocyclo -over 10 *.go cmd
  - godep go build ./...
  - godep go install github.com/pblaszczyk/go.spotify/cmd/spotifycli
  - godep go test -race -v ./...
