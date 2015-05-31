@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pblaszczyk/go.utils"
+	"github.com/pblaszczyk/go.spotify/Godeps/_workspace/src/github.com/pblaszczyk/go.utils"
 )
 
 type tdf func()

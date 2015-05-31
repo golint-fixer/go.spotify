@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	dbs "github.com/guelfey/go.dbus"
+	dbs "github.com/pblaszczyk/go.spotify/Godeps/_workspace/src/github.com/guelfey/go.dbus"
 )
 
 // Dbus is a structure implementing Dbus logic controlling Spotify

@@ -2,7 +2,7 @@ package introspect
 
 import (
 	"encoding/xml"
-	"github.com/guelfey/go.dbus"
+	"github.com/pblaszczyk/go.spotify/Godeps/_workspace/src/github.com/guelfey/go.dbus"
 	"reflect"
 )
 
