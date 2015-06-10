@@ -9,6 +9,11 @@
 		{
 			"ImportPath": "github.com/pblaszczyk/go.utils",
 			"Rev": "177bcf3c7f2c5feab26f4b3a0d6d15f8d6cbf5a2"
+		},
+		{
+			"ImportPath": "github.com/rthornton128/goncurses",
+			"Comment": "0.2-36-ga982ff0",
+			"Rev": "a982ff0008675d645be0c13a62eb6242851aed5c"
 		}
 	]
 }
