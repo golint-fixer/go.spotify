@@ -51,51 +51,54 @@ func searchArtist() {
 	s := spotify.NewSearch()
 	res, err := make(chan []spotify.Artist), make(chan error)
 	s.Artist(os.Args[3], res, err)
+	b := true
 LOOP:
 	for {
 		select {
 		case res := <-res:
-			disp(res)
+			disp(res, b)
+			b = false
 		case err := <-err:
 			handlerr(err)
 			break LOOP
 		}
 	}
-	fmt.Println("")
 }
 
 func searchAlbum() {
 	s := spotify.NewSearch()
 	res, err := make(chan []spotify.Album), make(chan error)
 	s.Album(os.Args[3], res, err)
+	b := true
 LOOP:
 	for {
 		select {
 		case res := <-res:
-			disp(res)
+			disp(res, b)
+			b = false
 		case err := <-err:
 			handlerr(err)
 			break LOOP
 		}
 	}
-	fmt.Println("")
 }
 
 func searchTrack() {
 	s := spotify.NewSearch()
 	res, err := make(chan []spotify.Track), make(chan error)
 	s.Track(os.Args[3], res, err)
+	b := true
 LOOP:
 	for {
 		select {
 		case res := <-res:
-			disp(res)
+			disp(res, b)
+			b = false
 		case err := <-err:
 			handlerr(err)
 			break LOOP
 		}
 	}
-	fmt.Println("")
 }
 
 func search() {
@@ -107,6 +110,7 @@ func search() {
 	case "track":
 		searchTrack()
 	}
+	fmt.Println("")
 }
 
 func main() {
@@ -134,13 +138,18 @@ func main() {
 	}
 }
 
-func disp(r interface{}) {
+func disp(r interface{}, b bool) {
 	for i := reflect.ValueOf(r).Len() - 1; i >= 0; i-- {
+		if !b {
+			fmt.Println("")
+			fmt.Println("")
+		}
+		b = false
 		for j, l := 0, reflect.ValueOf(r).Index(i).NumField(); j < l; j++ {
 			f := reflect.ValueOf(r).Index(i).Field(j)
-			if f.Kind() == reflect.Slice {
+			if f.Kind() == reflect.Slice && f.Len() > 0 {
 				fmt.Printf("%q\n", reflect.ValueOf(r).Index(i).Type().Field(j).Name)
-				disp(f.Interface())
+				disp(f.Interface(), true)
 			} else {
 				fmt.Printf("%q: %q",
 					reflect.ValueOf(r).Index(i).Type().Field(j).Name, f.String())
@@ -149,6 +158,5 @@ func disp(r interface{}) {
 				fmt.Println("")
 			}
 		}
-		fmt.Println("")
 	}
 }
