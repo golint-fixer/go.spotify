@@ -15,20 +15,10 @@ Usage:
   spotifycli [commands] [args...]
 
 Commands:
-  run      - Start Spotify destkop app.
-  kill     - Kill Spotify destkop app.
-  process  - Is Spotify destkop app running.
-  search   - Search for artist/album/track.
-    artist <name> - Search for artist.
-    album <name>  - Search for album.
-    track <name>  - Search for track.
-  play <URI>- Play URI.
-  stop      - Stop playing.
-  toggle    - Toggle playing.
-  status    - Current Status.
-  track     - Current track.
-  length    - Length of a current track.
-  raise     - Raise the Spotify desktop app.
+  search             - Search for artist/album/track.
+       artist <name> - Search for artist.
+       album  <name> - Search for album.
+       track  <name> - Search for track.
 `)
 	platfusage()
 	os.Exit(1)

@@ -86,12 +86,16 @@ var cmd2func = map[string]func(){
 }
 
 func platfusage() {
-	fmt.Printf(`  play <URI>- Play URI.
-  stop      - Stop playing.
-  toggle    - Toggle playing.
-  status    - Current Status.
-  track     - Current track.
-  length    - Length of a current track.
-  raise     - Raise the Spotify desktop app.
+	fmt.Printf(
+		`  play <URI>         - Play URI.
+  stop               - Stop playing.
+  toggle             - Toggle playing.
+  status             - Current Status.
+  track              - Current track.
+  length             - Length of a current track.
+  raise              - Raise the Spotify desktop app.
+  run                - Start Spotify destkop app.
+  kill               - Kill Spotify destkop app.
+  process            - Is Spotify destkop app running.
 `)
 }
