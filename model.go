@@ -118,6 +118,9 @@ const (
 
 	// Paused state.
 	Paused Status = "Paused"
+
+	// Stopped state.
+	Stopped Status = "Stopped"
 )
 
 // makeStatus is a helper function converting string to corresponding value
@@ -127,6 +130,8 @@ func makeStatus(status string) (Status, error) {
 	case string(Playing):
 		return Status(status), nil
 	case string(Paused):
+		return Status(status), nil
+	case string(Stopped):
 		return Status(status), nil
 	default:
 		return Status(""), fmt.Errorf("sscc: unsupported status: %s", status)
