@@ -10,7 +10,7 @@ for artists/albums/tracks.
 In order to install spotifycli application in your environment,
 Go compiler is required. If environment is configured, please run:
 
-```
+```bash
 ~ $ go get -u github.com/pblaszczyk/go.spotify/cmd/spotifycli
 ```
 
@@ -18,6 +18,6 @@ Go compiler is required. If environment is configured, please run:
 
 In order to see available commands please run:
 
-```
+```bash
 ~ $ spotifycli -h
 ```
