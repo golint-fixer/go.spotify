@@ -8,7 +8,7 @@ environment:
  GOPATH: c:\projects
 
 install:
- - powershell -command "& { iwr https://storage.googleapis.com/golang/go1.5.1.windows-amd64.zip -OutFile go.zip }"
+ - powershell -command "& { iwr https://storage.googleapis.com/golang/go1.5.2.windows-amd64.zip -OutFile go.zip }"
  - unzip -qq go.zip -d c:\projects\
  - set GOROOT=c:\projects\go
  - set PATH=%GOROOT%\bin;%GOPATH%\bin;%PATH%
